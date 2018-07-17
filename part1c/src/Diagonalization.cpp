@@ -19,4 +19,8 @@ for (int index = 0; index < n * n; index++)
 	hamiltonian(index) = matrix[index];
 
 hamiltonian.print();
+
+vec Eigval(n);
+eig_sym(Eigval, hamiltonian);
+cout << Eigval[0] << std::endl;
 }

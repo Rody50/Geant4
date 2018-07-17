@@ -3,10 +3,10 @@ TARGET = Diagonalization
 
 CC=g++
 # compiling flags
-CFLAGS=-c -std=c++14 -O3
+CFLAGS=-c -std=c++11 -O3
 
 # linking flags
-LDFLAGS=
+LDFLAGS=-larmadillo
 
 # libraries
 LIBS=-lm -lgsl -lgslcblas -larmadillo -llapack
