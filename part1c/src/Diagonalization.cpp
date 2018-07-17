@@ -6,6 +6,9 @@
 int main()
 {
 
+	const double d = 1.0;
+	const double g = -1.0;
+
  double matrix[n * n] = 
  			{2 * d - g/2.0, - g/2.0, - g/2.0, - g/2.0, - g/2.0, 0.0,
 			- g/2.0, 4 * d - g/2.0, - g/2.0, - g/2.0, 0.0, - g/2.0,
@@ -22,5 +25,5 @@ hamiltonian.print();
 
 vec Eigval(n);
 eig_sym(Eigval, hamiltonian);
-cout << Eigval[0] << std::endl;
+cout << "The first eigenvalue is: " << Eigval[0] << std::endl;
 }

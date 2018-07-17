@@ -9,7 +9,7 @@ CFLAGS=-c -std=c++11 -O3
 LDFLAGS=-larmadillo
 
 # libraries
-LIBS=-lm -lgsl -lgslcblas -larmadillo -llapack
+LIBS=-lm -larmadillo -llapack -lblas
 
 # specific directories for each extension
 SRCDIR=./src
