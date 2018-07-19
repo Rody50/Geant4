@@ -13,20 +13,13 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-
-struct configurationLabel
-{
-	int N;
-	int two_m;
-};
-
-
 class PairingConfiguration
 {
 
 	private:
-		vector<configurationLabel> fConfiguration;
+		int fPairs;
 		int fN;
+		vector<bool*> fConfigurations;
 
 	public:
 		PairingConfiguration(int N);
