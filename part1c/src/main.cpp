@@ -5,8 +5,6 @@ int main()
 {
 	const int n = 6;
 
-
-
 	const double d = 1.0;
 	double g_vec[21];
 	double corr_vec[21];
