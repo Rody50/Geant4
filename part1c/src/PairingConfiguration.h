@@ -1,13 +1,15 @@
 /* Header file for the single particle class (PairingConfiguration.h)*/
 
-#ifndef PairingConfiguration
-#define PairingConfiguration
+#ifndef PAIRINGCONFIGURATION_H
+#define PAIRINGCONFIGURATION_H
 
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
 #include <bitset>
+#include <cstdlib>
 
 using std::string;
 using std::vector;
@@ -20,20 +22,22 @@ class PairingConfiguration
 {
 
 	private:
-		int fPairs;
-		int fN;
+		const int fPairs;
+		const int fN;
 		vector<LL> fConfigurations;
 
 	public:
 		PairingConfiguration(int N, int pairs);
 
-		void setfN(int N);
+		// void setfN(int N);
 
-		void setfPairs(int pairs);
+		// void setfPairs(int pairs);
 
 		int getfN();
 
 		int getfPairs();
+
+		const vector<LL> & getConfigVec();
 
 		int CountBits1(LL config, int option);
 
@@ -42,4 +46,4 @@ class PairingConfiguration
 		void Print();
 };
 
-#endif // PairingConfiguration
+#endif // PAIRINGCONFIGURATION_H

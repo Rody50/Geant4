@@ -1,7 +1,7 @@
 /* Header file for the single particle class (SingleParticleState.h)*/
 
-#ifndef SingleParticleState
-#define SingleParticleState
+#ifndef SINGLEPARTICLESTATE_H
+#define SINGLEPARTICLESTATE_H
 
 #include <vector>
 #include <iostream>
@@ -48,4 +48,4 @@ class SingleParticleState
 		void print();
 };
 
-#endif // SingleParticleState
+#endif // SINGLEPARTICLESTATE_H
