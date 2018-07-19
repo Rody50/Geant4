@@ -2,7 +2,8 @@
 
 #include "PairingConfiguration.h"
 
-PairingConfiguration::PairingConfiguration(int N) : fN(N)
+PairingConfiguration::PairingConfiguration(int N, int pairs) : fN(N),
+ fPairs(pairs)
 {}
 
 void PairingConfiguration::setfN(int N)
@@ -10,56 +11,67 @@ void PairingConfiguration::setfN(int N)
 	fN = N;
 }
 
-void PairingConfiguration::GenerateSPS()
+void PairingConfiguration::setfPairs(int pairs)
 {
-	quantumNumber temp;
+	fPairs = pairs;
+}
 
-	for (int n = 0; fN - 2 * n >= 0; n++)
+int PairingConfiguration::getfN()
+{
+	return fN;
+}
+
+int PairingConfiguration::getfPairs()
+{
+	return fPairs;
+}
+
+int PairingConfiguration::CountBits1(LL config, int option) //Calculate the "1" bits of an integer.
+{
+	int n = 0;
+
+	if (option == 1)
 	{
-		temp.n = n;
-
-		int l = fN - 2 * n; 
-		temp.l = l;
-
-		int temp_two_j = 2 * l - 1;
-
-		for (int twoj = temp_two_j; twoj <= temp_two_j + 2; twoj+=2)
+		do
 		{
-			temp.two_j = twoj;
-			for (int two_mj = -twoj; two_mj <= twoj; two_mj+=2)
-			{
-				temp.two_m = two_mj;
-				fConfigurations.push_back(temp);
-			}
-		}	
+			config &= config-1;
+			n++;
+		} while(config!=0);
+
+		return n;
 	}
+
+	for (int state = 0; state < fN; state++)
+	{
+		LL ni = pow(2, state);
+		short ii = config & ni;
+		if(ii == 1) n++;
+	}
+
+	return n;
 }
 
-int PairingConfiguration::getn(int i)
+
+void PairingConfiguration::GenerateConfig()
 {
-	return fConfigurations[i].n;
+	LL N_max = pow(2, fN) - pow(2, fN - fPairs);
+
+	for (int config = N_max; config = 0; config--)
+	{
+		if (CountBits1(config, 0) == fPairs)
+			fConfigurations.push_back(config);
+	}
+
 }
 
-int PairingConfiguration::getl(int i)
+void PairingConfiguration::Print()
 {
-	return fConfigurations[i].l;
-}
-
-int PairingConfiguration::getTwo_j(int i)
-{
-	return fConfigurations[i].two_j;
-}
-
-int PairingConfiguration::getTwo_m(int i)
-{
-	return fConfigurations[i].two_m;
-}
-
-void PairingConfiguration::print()
-{
-	cout << "The quantum numbers are: " << endl;
-	cout << "n \t" << "l \t" << "twoj \t" << "two_m" << endl;
+	cout << "The different configurations are: " << endl;
+	
 	for (auto t : fConfigurations)
-		cout << t.n << " \t" << t.l << " \t" << t.two_j << " \t" << t.two_m << endl;
-	cout << "Done!" << endl;
+	{
+		std::bitset<fN> y(t);
+		cout << y << endl;
+	}
+
 }
