@@ -1,0 +1,35 @@
+/* Header file for the single particle class (SingleParticleState.h)*/
+
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using std::string;
+using std::vector;
+using std::cout;
+using std::endl;
+
+
+struct quantumNumber{
+	int n, l, two_j, two_m;
+};
+
+class SingleParticleState{
+public:
+	SingleParticleState(int N);
+
+	void setfN(int N);
+	void GenerateSPS();
+	int getn(int i);
+	int getl(int i);
+	int getTwo_j(int i);
+	int getTwo_m(int i);
+	void print();
+
+private:
+	vector<quantumNumber> fStates;
+	int fN;
+
+};
+
