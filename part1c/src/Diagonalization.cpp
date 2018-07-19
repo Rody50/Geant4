@@ -1,29 +1,16 @@
 /* Code that Diagonalizes the Hamiltonian (Diagonalization.cpp) */
+#include "Diagonalization.h"
 
-#include "Hamiltonian.h"
-
-
-int main()
+double eigenValue(const double g, const double d, const double * matrix, const int length)
 {
+	mat hamiltonian(length, length);
 
-	const double d = 1.0;
-	const double g = -1.0;
+	for (int index = 0; index < length * length; index++)
+		hamiltonian(index) = matrix[index];
 
- double matrix[n * n] = 
- 			{2 * d - g/2.0, - g/2.0, - g/2.0, - g/2.0, - g/2.0, 0.0,
-			- g/2.0, 4 * d - g/2.0, - g/2.0, - g/2.0, 0.0, - g/2.0,
-			- g/2.0, - g/2.0, 6 * d - g/2.0, 0.0, - g/2.0, - g/2.0,
-			- g/2.0, - g/2.0, 0.0, 6 * d - g/2.0, - g/2.0, - g/2.0,
-			- g/2.0, 0.0, - g/2.0, - g/2.0, 8 * d - g/2.0, - g/2.0,
-			0.0, - g/2.0, - g/2.0, - g/2.0, - g/2.0, 10 * d - g/2.0};
+	vec eigval(length);
 
+	eig_sym(eigval, hamiltonian);
 
-for (int index = 0; index < n * n; index++)
-	hamiltonian(index) = matrix[index];
-
-hamiltonian.print();
-
-vec Eigval(n);
-eig_sym(Eigval, hamiltonian);
-cout << "The first eigenvalue is: " << Eigval[0] << std::endl;
+	return eigval[0];
 }
