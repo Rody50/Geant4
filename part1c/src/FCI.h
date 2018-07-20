@@ -1,7 +1,7 @@
 #ifndef FCI_H
 #define FCI_H
 
-
+#include <fstream>
 #include "PairingConfiguration.h"
 #include "armadillo"
 

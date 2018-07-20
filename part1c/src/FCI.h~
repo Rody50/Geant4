@@ -1,7 +1,7 @@
 #ifndef FCI_H
 #define FCI_H
 
-
+#include <fstream>
 #include "PairingConfiguration.h"
 #include "armadillo"
 
@@ -11,7 +11,7 @@ class FCI
 {
 	private:
 		int fN, fN_pairs;
-		PairingConfiguration fPairs;
+		PairingConfiguration fPairConfig;
 		vector<LL> fConfiguration;
 		mat *fHamiltonian;		
 
