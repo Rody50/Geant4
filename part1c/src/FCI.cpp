@@ -2,13 +2,15 @@
 #include "FCI.h"
 #include "PairingConfiguration.h"
 
-FCI::FCI(int N, int n_pairs) : fN(N), fN_pairs(n_pairs), fPairConfig(N, n_pairs){
+FCI::FCI(int N, int n_pairs) : fN(N), fN_pairs(n_pairs), fPairConfig(N, n_pairs)
+{
 	fPairConfig.GenerateConfig();
 	fConfiguration = fPairConfig.getConfigVec();
 
 	const int size = fConfiguration.size();
 	fHamiltonian = new mat(size, size);
 }
+
 double FCI::MatrixElement(int config, int config_prime, double g, double d)
 {
 	int energy = 0;
