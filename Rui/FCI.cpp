@@ -161,27 +161,70 @@ void creat_config(int particle_no, int degen_lev)//creat the full configurations
 	int i=0;
 	int number_1;
 
-	/*define the single particle energies，定义单粒子能*/
-	double sp_energies[2*degen_lev];
 	double epsilon = 0.5; //epsilon is just a constant;
-	
-	/*define the <p|h0|q>*/
-	double e_qp = 0.3; //e_qp is <q|p>, we assume it is a constant at first.
-	double v_iq1_iq2 = 0.4; // v_iq1_iq2 is <iq1|v|iq2>. we assume it is a constant at first as well.
-	double v_p1q1_p2q2 = 0.6; // v_p1q1_p2q2 is <p1q1|v|p2q2>. we assume it is a constant.
-
-	for(int k =0; k<(2*degen_lev); k++)
+	double g_pq = -0.3; //is the coefficient of <q|p>.
+	double g_ip_iq = -0.4; // v_iq1_iq2 is <iq1|v|iq2>. we assume it is a constant at first as well.
+	double g_p1q1_p2q2 = -0.6; // v_p1q1_p2q2 is <p1q1|v|p2q2>. we assume it is a constant.
+ 	
+ 	/* Define the constant matrix of <q|p>, <ip|V|qi>, <p1,p2|q1,q2> */
+ 	double *e_pq = (double*)malloc(n*sizeof(double));
+ 	double *v_ip_iq = (double*)malloc(n*sizeof(double));
+ 	double *v_p1q1_p2q2 = (double*)malloc(n*sizeof(double));
+ 	for(int i = 0; i < n; i++)
+ 	{
+ 		for(int j = i; j < n; j++)
+ 		{
+ 			
+ 			if(j==i)
+ 			{
+ 				e_pq[i][j] = ((i/2)+1) * epsilon; //s-p energies
+ 			}
+ 			if(j!=i)
+ 			{
+ 				e_pq[i][j] = g_pq;
+ 			}
+ 			else 
+ 			{
+ 				e_pq[i][j] = 0.;
+ 			}
+ 		}
+ 	}
+	for(int i=0; i<n; i++) //free e_pq
 	{
-		if(k%2 == 0)
+		free(e_pq[i]);
+	}
+	free(e_pq);
+
+
+	for(int i = 0; i<n; i++)
+	{
+		for(int j = i+1 ; j<n; j++)
 		{
-			sp_energies[k] = (k/2) * epsilon;
-		}
-		else
-		{
-			sp_energies[k] = ((k-1)/2) * epsilon;
+				v_ip_iq[i][j] = g_ip_iq;
 		}
 	}
+	for(int i=0; i<n; i++) //free v_ip_iq
+	{
+		free(v_ip_iq[i]);
+	}
+	free(v_ip_iq);
+
+
+	for(int i = 0; i<n; i++)
+	{
+		for(int j = i+1 ; j<n; j++)
+		{
+
+				v_ip_iq[i][j] = g_p1q1_p2q2;
+		}
+	}
+	for(int i=0; i<n; i++) //free v_p1q1_p2q2
+	{
+		free(v_p1q1_p2q2[i]);
+	}
+	free(v_p1q1_p2q2);
 	
+
 	do
 	{
 		number_1 = count1Bits(N);
@@ -229,14 +272,7 @@ void creat_config(int particle_no, int degen_lev)//creat the full configurations
 	/* 1-body operator, i=j*/
 	for(int i = 0; i<n; i++)
 	{
-//		Matrix_element[i][i] = 0.;
-		for(int k = 0; k < (2*degen_lev); k++)
-		{
-			if((config[i]&(1<<k)) != 0)
-			{
-				Matrix_element[i][i] += sp_energies[k];
-			}
-		}
+		Matrix_element[i][i] += e_pq[i][i];
 	}
 	
 
@@ -255,7 +291,7 @@ void creat_config(int particle_no, int degen_lev)//creat the full configurations
 			{
 				N_temp = (config_temp_i | (1<<q));
 				Permut = count_between(N_temp, p, q);
-				Matrix_element[i][j] = pow(-1, Permut) * e_qp; //!!!Here h0 actually should not be a constant. in fact it is the integral value of <p|h0|q>.
+				Matrix_element[i][j] = pow(-1, Permut) * e_qp[p][q]; //!!!Here h0 actually should not be a constant. in fact it is the integral value of <p|h0|q>.
 			}
 		}
 	}
