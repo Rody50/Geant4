@@ -17,7 +17,7 @@ void FillMatrix::FillV()
 				{
 					if (IsPair(i, j) && IsPair(a, b) && i < j && a < b )
 						{
-							fV[i, j, a, b] = - g / 2.;
+							fV[i][j][a][b] = - g / 2.;
 							fV[i, j, b, a] =   g / 2.;
 							fV[j, i, a, b] =   g / 2.;
 							fV[j, i, b, a] = - g / 2.;
