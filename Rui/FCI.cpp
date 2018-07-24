@@ -96,7 +96,7 @@ int delta_2_digit(int N1, int N2, int &p1, int &q1, int &p2, int &q2, int partic
 	{
 		p1 = judge_digit_no(N ^ N1);
 		NN1 = reversebit(N ^ N1,p1);
-		q1 = judge_digit_no(NN1);
+		q1 = judge_digit_no(NN1);//p1,q1 are the index in N1, p2 and q2 are the index in N2
 
 		p2 = judge_digit_no(N ^ N2);
 		NN2 = reversebit(N ^ N2,p2);
@@ -215,7 +215,7 @@ void creat_config(int particle_no, int degen_lev)//creat the full configurations
 		for(int j = i+1 ; j<n; j++)
 		{
 
-				v_ip_iq[i][j] = g_p1q1_p2q2;
+				v_p1q1_p2q2[i][j] = g_p1q1_p2q2;
 		}
 	}
 	for(int i=0; i<n; i++) //free v_p1q1_p2q2
@@ -225,6 +225,8 @@ void creat_config(int particle_no, int degen_lev)//creat the full configurations
 	free(v_p1q1_p2q2);
 	
 
+
+	///////// Generate the full configuration space. ////////
 	do
 	{
 		number_1 = count1Bits(N);
@@ -291,19 +293,19 @@ void creat_config(int particle_no, int degen_lev)//creat the full configurations
 			{
 				N_temp = (config_temp_i | (1<<q));
 				Permut = count_between(N_temp, p, q);
-				Matrix_element[i][j] = pow(-1, Permut) * e_qp[p][q]; //!!!Here h0 actually should not be a constant. in fact it is the integral value of <p|h0|q>.
+				Matrix_element[i][j] = pow(-1, Permut) * e_qp[i][j]; //!!!Here h0 actually should not be a constant. in fact it is the integral value of <p|h0|q>.
 			}
 		}
 	}
 
-	/* 2-body operator, p1=p2 && q1=q2 */
+	/* 2-body operator, diagonal matrix elements */
 	for(int i = 0; i <n; i++)
 	{
 		Matrix_element[i][i] += two_body_diagonal(config[i], particle_no);
 	}
 
 
-	/* 2-body operator, p1=p2 && q1!=q2 */
+	/* 2-body operator,  |ip> and |iq> */
 
 	for(int i = 0; i<n; i++)
 	{
@@ -311,20 +313,20 @@ void creat_config(int particle_no, int degen_lev)//creat the full configurations
 		for(int j =0; j<n ;j++)
 		{
 			int config_temp_j1 = config[j];
-			int q1,q2; //different index q1 and q2.
+			int p,q; //different index p,q.
 			int flag1 = 0;
 			int N_temp1, Permut1;
-			flag1 = delta_1_digit(config_temp_i1, config_temp_j1,q1,q2,particle_no);
+			flag1 = delta_1_digit(config_temp_i1, config_temp_j1,p,q,particle_no);
 			if(flag1 == 1)
 			{
-				N_temp1 = (config_temp_i1 | (1<<q2));
-				Permut1 = count_between(N_temp1, q1, q2);
-				Matrix_element[i][j] += (particle_no -2) * pow(-1, Permut1) * v_iq1_iq2; //这里的(A-2)系数需要再仔细推导！！！
+				N_temp1 = (config_temp_i1 | (1<<q));
+				Permut1 = count_between(N_temp1, p, q);
+				Matrix_element[i][j] += (particle_no-2) * pow(-1, Permut1) * v_ip_iq[i][j]; //这里的(A-2)系数需要再仔细推导！！！
 			}
 		}
 	}
 
-	/* 2-body operator, p1!=p2 && q1!=q2 */
+	/* 2-body operator, |p1q1> and |p2q2> */
 
 	for(int i = 0; i<n; i++)
 	{
@@ -332,9 +334,9 @@ void creat_config(int particle_no, int degen_lev)//creat the full configurations
 		for(int j =0; j<n ;j++)
 		{
 			int config_temp_j2 = config[j];
-			int p1,p2,q1,q2; //different index q1 and q2.
+			int p1, q1, p2, q2; //p1 and q1 are in N1, p2 and q2 are in N2.
 			int flag2 = 0;
-			int N_temp2p, Permut2p, N_temp2q, Permut2q;
+			int N_temp2p, Permut2p, N_temp2q, Permut2q;//2p是p1和p2之间相差的1的个数，2q是q1和q2位之间相差的1的个数。
 			flag2 = delta_2_digit(config_temp_i2, config_temp_j2,p1,q1,p2,q2,particle_no);
 			if(flag2 == 1)
 			{
@@ -344,7 +346,7 @@ void creat_config(int particle_no, int degen_lev)//creat the full configurations
 				N_temp2q = (config_temp_i2 | (1<<q2));
 				Permut2q = count_between(N_temp2q, q1, q2);
 
-				Matrix_element[i][j] = pow(-1, Permut2p) * pow(-1, Permut2q) * v_p1q1_p2q2; //这里的系数需要再仔细推导！！！
+				Matrix_element[i][j] = pow(-1, Permut2p) * pow(-1, Permut2q) * v_p1q1_p2q2[i][j]; //这里的系数需要再仔细推导！！！
 			}
 		}
 	}
