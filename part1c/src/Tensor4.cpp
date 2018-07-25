@@ -1,11 +1,14 @@
 
 #include "Tensor4.h"
+#include "Tensor2.h"
+#include <iostream>
+
 
 Tensor4::Tensor4(int l1, int l2, int l3, int l4) : fL1(l1), fL2(l2),
- fL3(l3), fL4(l4), fTensor(l1 * l2 * l3 * l4, 0.0)
+ fL3(l3), fL4(l4)//, fTensor(l1 * l2 * l3 * l4, 0.0)
 {}
 
-double Tensor4::operator[][][][](int a, int b, int i, int j)
+double & Tensor4::operator()(int a, int b, int i, int j)
 {
 	return fTensor[ fL1 * fL2 * (fL3 * a + b) + fL1 * i + j];
 }
@@ -23,7 +26,7 @@ int Tensor4::GetL(int i)
 	return -1;
 }
 
-Tensor4 Tensor4::Prod4x4(const Tensor4 & t, 
+Tensor4 Tensor4::Prod4x4(Tensor4 & t, 
 	int * iO1, int * iO2)
 {
 	int iMax[6];
@@ -56,16 +59,16 @@ Tensor4 Tensor4::Prod4x4(const Tensor4 & t,
 							}
 							 
 							result_temp +=
-								fTensor[iv[0]][iv[1]][iv[2]][iv[3]] 
-								* t[it[0]][it[1]][it[2]][it[3]];
+								(*this)(iv[0], iv[1], iv[2], iv[3]) 
+								* t(it[0], it[1], it[2], it[3]);
 						}
-						result[i1][i2][i3][i4] = result_temp;
+						result(i1, i2, i3, i4) = result_temp;
 				}
 	return result;
 
 }
 
-Tensor2 Tensor4::Prod4x4(const Tensor4 & t,
+Tensor2 Tensor4::Prod4x4s3(Tensor4 & t,
  int * iO1, int * iO2)
 {
 	int iMax[5];
@@ -97,17 +100,16 @@ Tensor2 Tensor4::Prod4x4(const Tensor4 & t,
 						}
 						 
 						result_temp +=
-							fTensor[iv[0]][iv[1]][iv[2]][iv[3]] 
-							* t[it[0]][it[1]][it[2]][it[3]];
+							(*this)(iv[0], iv[1], iv[2], iv[3]) 
+							* t(it[0], it[1], it[2], it[3]);
 					}
 
-			result[i1][i2] = result_temp;
+			result(i1, i2) = result_temp;
 		}
 	return result;
-
 }
 
-Tensor4 Tensor4::Prod4x2(const Tensor2 & t, 
+Tensor4 Tensor4::Prod4x2(Tensor2 & t, 
 	int * iO1, int * iO2)
 {
 	int iMax[5];
@@ -138,11 +140,11 @@ Tensor4 Tensor4::Prod4x2(const Tensor2 & t,
 						}
 						 
 						result_temp +=
-							fTensor[iv[0]][iv[1]][iv[2]][iv[3]] 
-							* t[it[0]][it[1]];
+							(*this)(iv[0], iv[1], iv[2], iv[3]) 
+							* t(it[0], it[1]);
 					}
 
-					result[i1][i2][i3][i4] = result_temp;
+					result(i1, i2, i3, i4) = result_temp;
 				}
 
 	return result;
@@ -150,5 +152,16 @@ Tensor4 Tensor4::Prod4x2(const Tensor2 & t,
 
 void Tensor4::Print()
 {
+	for (int a = 0; a < fL1; a++)
+		for (int b = 0; b < fL2; b++)
+		{
+			for (int i = 0; i < fL3; i++)
+				for (int j = 0; j < fL4; j++)
+				{
+					std::cout << (*this)(a, b, i, j) << " ";
 
+				}
+
+			std::cout << std::endl;	
+		}		
 }

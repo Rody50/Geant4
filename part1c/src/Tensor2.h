@@ -12,12 +12,12 @@ class Tensor2 : public Tensor
 	public:
 		Tensor2(int l1, int l2);
 
-		double operator[][](int i, int j);
+		double & operator()(int i, int j);
 
 		int GetL(int i);
 
 		virtual void Print();
 
-}
+};
 
 #endif // TENSOR2_H

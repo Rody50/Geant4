@@ -10,20 +10,19 @@ class CCM
 {
 	public:
 		Tensor4 fHamil;
-		Tensor4 fVpppp, fVpphh, fVhhhh;
-		Tensor4 fTpppp, fTpphh, fThhhh;
+		Tensor4 fVpppp, fVpphh, fVhhhh, fVhhpp;
+		Tensor4 fTpphh;
 		Tensor2 fFpp, fFhh;
-		int fNu;
-		int fA;
-		int fN;
+		int fNu, fA, fN;
+		double fG, fD;
 
 	private:
-		CCM(int A, int N);
+		CCM(int A, int N, double g, double d);
 
 		void ComputeH();
 
 		void SolveT();
 
-}
+};
 
 #endif  // CCM_H

@@ -1,6 +1,7 @@
 #include "SingleParticleState.h"
 #include "PairingConfiguration.h"
 #include "FCI.h"
+#include "CCM.h"
 
 int main()
 {
@@ -30,5 +31,8 @@ int main()
 		file0 << g << "\t" << eigenVal0 - (2*1.0-g) << endl;
 		file1 << g << "\t" << eigenVec00 << endl;
 	}
+
+	CCM coupled(2, 4, -1., 1.);
+	coupled.SolveT();
 
 }

@@ -14,8 +14,8 @@ class Tensor
 	public:
 		Tensor();
 
-		virtual void Print();
+		virtual void Print() = 0;
 
-}
+};
 
 #endif // TENSOR_H
