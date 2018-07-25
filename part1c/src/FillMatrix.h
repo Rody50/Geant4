@@ -15,30 +15,19 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-typedef long long LL;
-
 class FillMatrix
 {
-	private:
-		int fNu;
-		int fA;
-		int fN;
-
-		Tensor4 fV;
-		Tensor4 fT;
-		Tensor2 fF;
 
 	public:
-		FillMatrix(int N, int particles);
+		FillMatrix();
 
-		void FillV();
+		static void FillV(Tensor4 & v);
 
-		void FillF();
+		static void FillF(Tensor2 & f, bool isHole);
 
-		void FillT();
+		static void FillT(Tensor4 & t, Tensor4 & v, Tensor2 & fp,
+			Tensor2 & fh);
 
-		bool IsPair(int a, int b);
-
-
+		static bool IsPair(int a, int b);
 }
 #endif  // FILLMATRIX_H

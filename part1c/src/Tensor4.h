@@ -6,7 +6,7 @@
 
 class Tensor2;
 
-class Tensor4 : Tensor
+class Tensor4 : public Tensor
 {
 	private: 
 		int fL1, fL2, fL3, fL4;
@@ -18,9 +18,11 @@ class Tensor4 : Tensor
 
 		int GetL(int i);
 
-		void Multiplication4x4(const Tensor4 & t, Tensor4 & result);
+		Tensor4 Prod4x4(const Tensor4 & t, int * iO1, int * iO2);
 
-		void Multiplication4x2(const Tensor2 & t, Tensor2 & result);
+		Tensor2 Prod4x4(const Tensor4 & t, int * iO1, int * iO2);
+
+		Tensor4 Prod4x2(const Tensor2 & t, int * iO1, int * iO2);
 
 		virtual void Print();
 
