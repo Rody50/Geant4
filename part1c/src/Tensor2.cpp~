@@ -3,7 +3,8 @@
 #include <iostream>
 
 
-Tensor2::Tensor2(int l1, int l2) : fL1(l1), fL2(l2)//, fTensor(l1 * l2, 0.0)
+Tensor2::Tensor2(int l1, int l2) : 
+	Tensor(l1 * l2, 0.0), fL1(l1), fL2(l2)
 {}
 
 double & Tensor2::operator()(int i, int j)

@@ -4,18 +4,23 @@
 
 #include "Tensor.h"
 
-class Tensor2 : Tensor
+class Tensor2 : public Tensor
 {
 	private:
-		int fLength;
+		int fL1, fL2;
 
 	public:
-		Tensor2(int length);
+		Tensor2(int l1, int l2);
 
-		double operator[][](int i, int j);
+		double & operator()(int i, int j);
+		const double & operator()(int i, int j) const{
+			return operator()(i, j);
+		}
+
+		int GetL(int i) const;
 
 		virtual void Print();
 
-}
+};
 
 #endif // TENSOR2_H

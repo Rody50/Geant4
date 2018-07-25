@@ -29,7 +29,6 @@ class Tensor4 : public Tensor
 
 		virtual void Print();
 
-
 };
 
 #endif // TENSOR4_H

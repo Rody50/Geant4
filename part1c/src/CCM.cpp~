@@ -2,13 +2,13 @@
 #include "CCM.h"
 
 CCM::CCM(int A, int N, double g, double d) : fA(A), fN(N),
-	fNu(N - A), fG(g), fD(d), fHamil(N - A, N - A, A, A),
-	fVpppp(N - A, N - A, N - A, N - A),	
-	fVpphh(N - A, N - A, A, A), 
-	fVhhpp(A, A, N - A, N - A), 
+	fNu(N - A), fG(g), fD(d), fHamil(fNu, fNu, A, A),
+	fVpppp(fNu, fNu, fNu, fNu),	
+	fVpphh(fNu, fNu, A, A), 
+	fVhhpp(A, A, fNu, fNu), 
 	fVhhhh(A, A, A, A),
-	fTpphh(N - A, N - A, A, A),
-	fFpp(N - A, N - A),
+	fTpphh(fNu, fNu, A, A),
+	fFpp(fNu, fNu),
 	fFhh(A, A)
 {
 	FillMatrix::FillV(fVpppp, fG); FillMatrix::FillV(fVpphh, fG);

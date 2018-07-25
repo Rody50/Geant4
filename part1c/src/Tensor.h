@@ -12,10 +12,10 @@ class Tensor
 		vector<double> fTensor;
 
 	public:
-		Tensor();
+		Tensor(int l, double val = 0.);
 
-		virtual void Print();
+		virtual void Print() = 0;
 
-}
+};
 
 #endif // TENSOR_H

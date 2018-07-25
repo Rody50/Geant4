@@ -1,28 +1,28 @@
 #include "SingleParticleState.h"
 #include "PairingConfiguration.h"
 #include "FCI.h"
+#include "CCM.h"
 
 int main()
 {
     SingleParticleState sPS(2);
 
 	sPS.GenerateSPS();
-	sPS.print();
+//	sPS.print();
 
-	int N = 10;
+	int N = 4;
 	int no_pairs = 2;
 
 	FCI hamiltonian(N, no_pairs);
 
 	hamiltonian.GenerateMatrix(1.0, 1.0);
-	hamiltonian.Print();
+//	hamiltonian.Print();
 	
 	double g = -1.;
 	double eigenVec00, eigenVal0;
 	std::ofstream file0("results/eigVal0_10.txt");
 	std::ofstream file1("results/eigVec00_10.txt");
 	
-	double Nvec[4] = {4, 6, 8, 10};
 	for(int i = 0 ; i < 21; i++){
 		g += 0.1;
 		hamiltonian.GenerateMatrix(g, 1.0);
@@ -31,4 +31,7 @@ int main()
 		file1 << g << "\t" << eigenVec00 << endl;
 	}
 
+	CCM coupled(2, 4, -1., 1.);
+//	coupled.SolveT();
+	
 }

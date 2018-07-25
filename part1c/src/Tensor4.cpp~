@@ -1,11 +1,12 @@
 
+#include <iostream>
 #include "Tensor4.h"
 #include "Tensor2.h"
-#include <iostream>
 
 
-Tensor4::Tensor4(int l1, int l2, int l3, int l4) : fL1(l1), fL2(l2),
- fL3(l3), fL4(l4)//, fTensor(l1 * l2 * l3 * l4, 0.0)
+Tensor4::Tensor4(int l1, int l2, int l3, int l4)
+	 : Tensor(l1 * l2 * l3 * l4, 0.0),
+	 fL1(l1), fL2(l2), fL3(l3), fL4(l4)
 {}
 
 double & Tensor4::operator()(int a, int b, int i, int j)

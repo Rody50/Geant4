@@ -1,2 +1,3 @@
-*.o
-*.cpp~
+part1c/src/obj/*.o
+part1c/src/*.cpp~
+part1c/src/*.h~

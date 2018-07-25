@@ -1,19 +1,35 @@
 
 #include "Tensor2.h"
+#include <iostream>
 
-Tensor2::Tensor2(int length) : fLength(length), fTensor(length, 0.0)
+
+Tensor2::Tensor2(int l1, int l2) : 
+	Tensor(l1 * l2, 0.0), fL1(l1), fL2(l2)
+{}
+
+double & Tensor2::operator()(int i, int j)
 {
-
+	return fTensor[i * fL1 + j];
 }
 
-double Tensor2::operator[][](int i, int j)
+int Tensor2::GetL(int i) const
 {
-	if (i == j) return fTensor[i];
-
-	return 0;
+	switch(i)
+	{
+		case 0: return fL1;
+		case 1: return fL2;
+		default: break;
+	}
+	return -1;
 }
 
 void Tensor2::Print()
 {
+	for (int i = 0; i < fL1; i++)
+	{
+		for (int j = 0; j < fL2; j++)
+			std::cout << (*this)(i, j) << " ";
 
+		std::cout << std::endl;	
+	}
 }

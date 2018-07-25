@@ -14,7 +14,7 @@ LIBS=-lm -larmadillo -llapack -lblas
 # compilation options for ROOT
 RO=$(shell root-config --cflags) $(shell root-config --libs)
 ROOTINC=$(shell root-config --incdir)
-LIBS+=$(RO)
+#LIBS+=$(RO)
 
 # specific directories for each extension
 SRCDIR=./src
