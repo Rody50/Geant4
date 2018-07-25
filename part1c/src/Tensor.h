@@ -8,10 +8,14 @@ using std::vector;
 
 class Tensor
 {
-	private:
+	protected:
 		vector<double> fTensor;
 
 	public:
+		Tensor();
+
+		virtual void Print();
+
 }
 
 #endif // TENSOR_H
