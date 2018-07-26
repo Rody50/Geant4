@@ -34,11 +34,11 @@ int main()
 	int nLevels = 8;
 	int particles = 4;
 
-	CCM coupled(particles, nLevels, -1., 1.);
+	CCM coupled(particles, nLevels, 1., 1.);
 	cout << "The Hamiltonian: " << endl;
 	//coupled.Print();
-	//coupled.ComputeH();
-	//coupled.Print();
-	//coupled.SolveT();
+	coupled.ComputeH();
+	coupled.Print();
+	coupled.SolveT();
 	
 }
