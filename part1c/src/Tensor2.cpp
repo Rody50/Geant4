@@ -8,7 +8,7 @@ Tensor2::Tensor2(int l1, int l2) :
 {}
 
 double & Tensor2::operator()(int i, int j)
-{
+{	
 	return fTensor[i * fL1 + j];
 }
 

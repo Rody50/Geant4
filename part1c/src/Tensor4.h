@@ -15,8 +15,10 @@ class Tensor4 : public Tensor
 		Tensor4(int l1, int l2, int l3, int l4);
 
 		double & operator()(int i, int j, int a, int b);
-		const double & operator()(int i, int j, int a, int b) const{
-			return operator()(i, j, a, b);
+		
+		const double & operator()(int i, int j, int a, int b) const
+		{
+			return fTensor[ fL1 * fL2 * (fL3 * a + b) + fL1 * i + j];
 		}
 
 		int GetL(int i) const;

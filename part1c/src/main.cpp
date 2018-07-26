@@ -31,14 +31,14 @@ int main()
 		file1 << g << "\t" << eigenVec00 << endl;
 	}
 
-	int nLevels = 4;
-	int particles = 2;
+	int nLevels = 8;
+	int particles = 4;
 
 	CCM coupled(particles, nLevels, -1., 1.);
 	cout << "The Hamiltonian: " << endl;
-	coupled.Print();
-	coupled.ComputeH();
-	coupled.Print();
-	// coupled.SolveT();
+	//coupled.Print();
+	//coupled.ComputeH();
+	//coupled.Print();
+	//coupled.SolveT();
 	
 }

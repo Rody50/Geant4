@@ -3,6 +3,7 @@
 #define TENSOR2_H
 
 #include "Tensor.h"
+#include <iostream>
 
 class Tensor2 : public Tensor
 {
@@ -15,8 +16,8 @@ class Tensor2 : public Tensor
 		double & operator()(int i, int j);
 		
 		const double & operator()(int i, int j) const
-		{
-			return operator()(i, j);
+		{	
+			return fTensor[i * fL1 + j];
 		}
 
 		int GetL(int i) const;
