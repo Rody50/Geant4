@@ -11,7 +11,6 @@ using namespace std;
 
 const int particle_no = 4;
 const int n_mu = 4; // Available positions above Fermion
-//const double g = -0.5;
 const double epsilon = 1.0;
 
 /////// Fuction <rs|V|pq> ////////
@@ -82,8 +81,6 @@ double Fill_HN(double g)
 
 	//Ec is the correlation energy, Ec = Ecc - Eref.
 	double Ec = 0.;
-//	printf("Ec_0 = -%.7f\n",Ec);
-
 
 	/////// Initialized the t_ijab. Trial solution t_ijab_0 /////////
 	for(int i = 0; i<particle_no; i++) 
@@ -124,8 +121,6 @@ double Fill_HN(double g)
 						}
 
 						h[0] = V_pqrs(i,j,a,b,g);
-
-					//	h[1] = (a/2+b/2-i/2-j/2) * epsilon * t_ijab[i][j][a-particle_no][b-particle_no];
 							
 						for(int k = 0; k< particle_no; k++)
 						{
@@ -136,44 +131,6 @@ double Fill_HN(double g)
 						{
 							h[2] += f_pq(c,b,g) * t_ijab[i][j][a-particle_no][c-particle_no] - f_pq(c,a,g) * t_ijab[i][j][b-particle_no][c-particle_no];
 						}
-						/*for(int c = particle_no; c<(particle_no+n_mu); c++)
-						{
-							for(int d = particle_no; d<(particle_no+n_mu); d++)
-							{
-								h[2] += 0.5 * V_pqrs(c,d,a,b,g) * t_ijab[i][j][c-particle_no][d-particle_no];
-							}
-						}*/
-					/*	for(int k = 0; k<particle_no; k++)
-						{
-							for(int l=0; l<particle_no; l++)
-							{
-								h[3] += 0.5 * V_pqrs(i,j,k,l,g) * t_ijab[k][l][a-particle_no][b-particle_no];
-							}
-						}
-						for(int k = 0; k<particle_no; k++)
-						{
-							for(int c = particle_no; c<(particle_no+n_mu); c++)
-							{
-								h[4] += V_pqrs(c,j,k,b,g) * t_ijab[i][k][a-particle_no][c-particle_no] - V_pqrs(c,j,k,a,g) * t_ijab[i][k][b-particle_no][c-particle_no] - V_pqrs(c,i,k,b,g) * t_ijab[j][k][a-particle_no][c-particle_no] + V_pqrs(c,i,k,a,g) * t_ijab[j][k][b-particle_no][c-particle_no];
-							}
-						}
-
-						for(int k = 0; k<particle_no; k++)
-						{
-							for(int c = particle_no; c < (particle_no+n_mu); c++)
-							{
-								for(int l = 0; l < particle_no; l++)
-								{
-									for(int d = particle_no; d<(particle_no+n_mu); d++)
-									{
-										h[5] += 0.25 * V_pqrs(c,d,k,l,g) * t_ijab[i][j][c-particle_no][d-particle_no] * t_ijab[k][l][a-particle_no][b-particle_no];
-										h[6] += V_pqrs(c,d,k,l,g) * t_ijab[i][k][a-particle_no][c-particle_no] * t_ijab[j][l][b-particle_no][d-particle_no] - V_pqrs(c,d,k,l,g) * t_ijab[j][k][a-particle_no][c-particle_no] * t_ijab[i][l][b-particle_no][d-particle_no];
-										h[7] += (-0.5) * V_pqrs(c,d,k,l,g) * t_ijab[i][k][d-particle_no][c-particle_no] * t_ijab[l][j][a-particle_no][b-particle_no] - (-0.5) * V_pqrs(c,d,k,l,g) * t_ijab[j][k][d-particle_no][c-particle_no] * t_ijab[l][i][a-particle_no][b-particle_no];
-										h[8] += (-0.5) * V_pqrs(c,d,k,l,g) * t_ijab[l][k][a-particle_no][c-particle_no] * t_ijab[i][j][d-particle_no][b-particle_no] - (-0.5) * V_pqrs(c,d,k,l,g) * t_ijab[l][k][b-particle_no][c-particle_no] * t_ijab[i][j][d-particle_no][a-particle_no];
-									}
-								}
-							}
-						}*/
 						
 						for(int k = 0; k<particle_no; k++)
 						{
