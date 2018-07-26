@@ -29,13 +29,16 @@ void FillMatrix::FillV(Tensor4 & v, double g)
 				}
 }
 
-void FillMatrix::FillF(Tensor2 & f, bool isHole, double g, double d)
+void FillMatrix::FillF(Tensor2 & f, int A, double g, double d)
 {
+	bool isHole = false;
+	if(A == 0) isHole = true;
 
 	for (int i = 0; i < f.GetL(1); i++)
 	{
-		f(i, i) = d * floor(i / 2.);
-		if (isHole) f(i, i) += - g / 2.;
+		if (!isHole) f(i, i) = (i + A) / 2 * d;
+
+		if (isHole) f(i, i) = i / 2 * d - g / 2.;
 	}
 }
 

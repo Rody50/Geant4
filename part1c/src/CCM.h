@@ -23,6 +23,8 @@ class CCM
 
 		void SolveT();
 
+		void Print();
+
 };
 
 #endif  // CCM_H

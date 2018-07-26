@@ -13,7 +13,9 @@ class Tensor2 : public Tensor
 		Tensor2(int l1, int l2);
 
 		double & operator()(int i, int j);
-		const double & operator()(int i, int j) const{
+		
+		const double & operator()(int i, int j) const
+		{
 			return operator()(i, j);
 		}
 

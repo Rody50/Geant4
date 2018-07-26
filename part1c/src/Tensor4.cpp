@@ -30,6 +30,11 @@ int Tensor4::GetL(int i) const
 Tensor4 Tensor4::Prod4x4(Tensor4 & t, 
 	int * iO1, int * iO2)
 {
+	//t.Print();
+	//std::cout << std::endl;
+	//Print();
+	//	std::cout << std::endl;
+
 	int iMax[6];
 	for (int i = 0; i < 4; i++)
 		for(int j = 0; j < 6; j++)
@@ -65,6 +70,10 @@ Tensor4 Tensor4::Prod4x4(Tensor4 & t,
 						}
 						result(i1, i2, i3, i4) = result_temp;
 				}
+				//result.Print();
+					//std::cout << std::endl;
+					//getchar();
+
 	return result;
 
 }
@@ -113,6 +122,9 @@ Tensor2 Tensor4::Prod4x4s3(Tensor4 & t,
 Tensor4 Tensor4::Prod4x2(const Tensor2 & t, 
 	int * iO1, int * iO2)
 {
+	std::cout << "Did we enter the method?" << std::endl;
+	getchar();
+
 	int iMax[5];
 	for (int i = 0; i < 4; i++)
 		for(int j = 0; j < 5; j++)
@@ -128,6 +140,9 @@ Tensor4 Tensor4::Prod4x2(const Tensor2 & t,
 			for (int i3 = 0; i3 < iMax[2]; i3++)
 				for (int i4 = 0; i4 < iMax[3]; i4++)
 				{
+					std::cout << "Did we enter the first iteration?" << std::endl;
+					getchar();
+
 					double result_temp = 0.; 
 					for (int i = 0; i < iMax[4]; i++)
 					{								
@@ -139,10 +154,12 @@ Tensor4 Tensor4::Prod4x2(const Tensor2 & t,
 							iv[ii] = id[iO1[ii]];
 							if (ii < 2) it[ii] = id[iO2[ii]];
 						}
-						 
+						 std::cout << "before result" << std::endl;
+					getchar();
 						result_temp +=
-							(*this)(iv[0], iv[1], iv[2], iv[3]) 
-							* t(it[0], it[1]);
+							(*this)(iv[0], iv[1], iv[2], iv[3]) * t(it[0], it[1]);
+							std::cout << "after result" << std::endl;
+					getchar();
 					}
 
 					result(i1, i2, i3, i4) = result_temp;
@@ -159,7 +176,7 @@ void Tensor4::Print()
 			for (int i = 0; i < fL3; i++)
 				for (int j = 0; j < fL4; j++)
 				{
-					std::cout << (*this)(a, b, i, j) << " ";
+					std::cout << (*this)(a, b, i, j) << " \t";
 
 				}
 

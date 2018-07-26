@@ -100,10 +100,10 @@ LL InverseBit(LL num, int N){ // inverse the bit ordering of an integer, N: numb
 		num >>= 1;
 	}
 	for(int i = N - 1; i >= 0; i--){
-		num_in += bitVec[i] << N - i - 1;
+		num_in += bitVec[i] << (N - i - 1);
 	}
 		
-	delete bitVec;
+	delete [] bitVec;
 	return num_in;
 }
 

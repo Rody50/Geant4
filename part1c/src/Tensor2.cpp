@@ -28,7 +28,7 @@ void Tensor2::Print()
 	for (int i = 0; i < fL1; i++)
 	{
 		for (int j = 0; j < fL2; j++)
-			std::cout << (*this)(i, j) << " ";
+			std::cout << (*this)(i, j) << " \t";
 
 		std::cout << std::endl;	
 	}
