@@ -6,11 +6,12 @@
 #include <math.h>
 #include <cmath>
 #include <iomanip>
+#include <time.h>
 
 using namespace std;
 
-const int particle_no = 4;
-const int n_mu = 4; // Available positions above Fermion
+const int particle_no = 10;
+const int n_mu = 10; // Available positions above Fermion
 const double epsilon = 1.0;
 
 /////// Fuction <rs|V|pq> ////////
@@ -57,7 +58,7 @@ double f_pq(int p, int q, double g)
 	}
 }
 
-
+//***** FILL THE HN_BAR MATRIX ELEMENTS AND DO THE ITERATION TO GET THE CONVERGED CORRELATION ENERGY. *****//
 double Fill_HN(double g)
 {
 	//////// Allocate for HN_bar(ij,ab) and t_(ij,ab) 4D-Matrix ////////
@@ -99,7 +100,7 @@ double Fill_HN(double g)
 
 	//////// FILL HAMILTONIAN HN /////////
 	int i=0;
-	double h[10];
+	double h[10], chi1, chi2, chi3, chi4;
 	double temp1, temp2, delta;
 	do
 	{
@@ -132,7 +133,7 @@ double Fill_HN(double g)
 							h[2] += f_pq(c,b,g) * t_ijab[i][j][a-particle_no][c-particle_no] - f_pq(c,a,g) * t_ijab[i][j][b-particle_no][c-particle_no];
 						}
 						
-						for(int k = 0; k<particle_no; k++)
+/*						for(int k = 0; k<particle_no; k++)
 						{
 							for(int c = particle_no; c < (particle_no+n_mu); c++)
 							{
@@ -148,7 +149,94 @@ double Fill_HN(double g)
 									}
 								}
 							}						
+						}*/
+
+
+						//****** FACTORIZATION FOR LOWER COST IN CCD *****//
+						//*************** CUT THE DIAGRAM ****************//
+						/////// Diagram 7 Factorization ///////
+						for(int c = particle_no; c < (particle_no + n_mu); c++)
+						{
+							chi1 = 0.;
+							chi2 = 0.;
+							for(int k = 0; k<particle_no; k++)
+							{
+								h[3] += (t_ijab[i][k][a-particle_no][c-particle_no] * V_pqrs(c,j,k,b,g) -t_ijab[i][k][b-particle_no][c-particle_no]*V_pqrs(c,j,k,a,g)) - (t_ijab[j][k][a-particle_no][c-particle_no]*V_pqrs(c,i,k,b,g) + t_ijab[j][k][b-particle_no][c-particle_no]*V_pqrs(c,i,k,a,g));
+								for(int l = 0; l < particle_no; l++)
+								{
+									for(int d = particle_no; d<(particle_no+n_mu); d++)
+									{
+										chi1 += V_pqrs(c,d,k,l,g) * t_ijab[k][l][b-particle_no][d-particle_no];
+										chi2 += V_pqrs(c,d,k,l,g) * t_ijab[k][l][a-particle_no][d-particle_no];								
+									}
+								}
+							}
+
+							h[6] += (-1) * 0.5 * (t_ijab[i][j][a-particle_no][c-particle_no] * chi1 - t_ijab[i][j][b-particle_no][c-particle_no] * chi2);
 						}
+
+						/////// Diagram 8 Factorization ///////
+						for(int k = 0; k < particle_no; k++)
+						{
+							chi1 = 0.;
+							chi2 = 0.;
+							for(int c = particle_no; c < (particle_no+n_mu); c++)
+							{
+								for(int l = 0; l < particle_no; l++)
+								{
+									for(int d = particle_no; d<(particle_no+n_mu); d++)
+									{
+										chi1 += V_pqrs(c,d,k,l,g)*t_ijab[j][l][c-particle_no][d-particle_no];
+										chi2 += V_pqrs(c,d,k,l,g)*t_ijab[i][l][c-particle_no][d-particle_no];
+									}
+								}
+							}
+							h[7] += (-1) * 0.5 * (t_ijab[i][k][a-particle_no][b-particle_no] * chi1 - t_ijab[j][k][a-particle_no][b-particle_no] * chi2);
+						}
+
+						/////// Diagram 9 Factorization ///////
+						for(int k = 0; k < particle_no; k++)
+						{
+							for(int c = particle_no; c < (particle_no+n_mu); c++)
+							{
+								chi1 = 0.;
+								chi2 = 0.;
+								chi3 = 0.;
+								chi4 = 0.;
+								for(int l = 0; l < particle_no; l++)
+								{
+									for(int d = particle_no; d<(particle_no+n_mu); d++)
+									{
+										chi1 += V_pqrs(c,d,k,l,g)*t_ijab[l][j][d-particle_no][b-particle_no];
+										chi2 += V_pqrs(c,d,k,l,g)*t_ijab[l][j][d-particle_no][a-particle_no];
+										chi3 += V_pqrs(c,d,k,l,g)*t_ijab[l][i][d-particle_no][b-particle_no];
+										chi4 += V_pqrs(c,d,k,l,g)*t_ijab[l][i][d-particle_no][a-particle_no];
+									}
+								}
+
+								h[8] += 0.5 * (t_ijab[i][k][a-particle_no][c-particle_no]*chi1 - t_ijab[i][k][b-particle_no][c-particle_no]*chi2 - t_ijab[j][k][a-particle_no][c-particle_no]*chi3 + t_ijab[j][k][b-particle_no][c-particle_no]*chi4);
+							}
+						}
+
+						/////// Diagram 10 Factorization ///////
+						for(int d = particle_no; d < (particle_no+n_mu); d++)
+						{
+							for(int c = particle_no; c < (particle_no+n_mu); c++)
+							{
+								chi1 = 0.;
+								for(int l = 0; l < particle_no; l++)
+								{
+									for(int k = 0; k<particle_no; k++)
+									{
+										chi1 += V_pqrs(c,d,k,l,g)*t_ijab[k][l][a-particle_no][b-particle_no];
+									}
+								}
+
+								h[9] += 0.25 * (t_ijab[i][j][c-particle_no][d-particle_no] * chi1);
+							}
+						}
+										
+			
 
 						for(int k =0; k<particle_no; k++)
 						{
@@ -166,6 +254,7 @@ double Fill_HN(double g)
 							}
 						}
 
+						///****  FILL THE HN_ij^ab MATRIX  ****///
 						HN_bar[i][j][a-particle_no][b-particle_no] = 0.;
 						for(int m = 0; m<10; m++)
 						{
@@ -179,7 +268,9 @@ double Fill_HN(double g)
 		double t_no_this, t_last;
 		double alpha = 0.5; //*** Here we could try different alpha!!! ****//
 		
-		///// Renew t_ijab matrix elements /////
+		///// RENEW t_ijab MATRIX ELEMENTS /////
+		//////**** HERE we should use MIXING !!!****///////
+		//**** t(i) = a * t_no_mixing(i) + (1-a) * t(i-1) ****//
 		for(int i = 0; i<particle_no; i++) 
 		{
 			for(int j = 0; j<particle_no; j++)
@@ -189,7 +280,6 @@ double Fill_HN(double g)
 					for(int b = particle_no; b < (particle_no + n_mu); b++)
 					{
 				//		t_ijab[i][j][a-particle_no][b-particle_no] -= HN_bar[i][j][a-particle_no][b-particle_no] / (f_pq(a,a,g) + f_pq(b,b,g) - f_pq(i,i,g) - f_pq(j,j,g));
-					//////**** HERE we should use MIXING !!!****///////
 						t_last = t_ijab[i][j][a-particle_no][b-particle_no];
 						t_no_this = t_ijab[i][j][a-particle_no][b-particle_no] - HN_bar[i][j][a-particle_no][b-particle_no] / (f_pq(a,a,g) + f_pq(b,b,g) - f_pq(i,i,g) - f_pq(j,j,g));
 						t_ijab[i][j][a-particle_no][b-particle_no] = alpha * t_no_this + (1-alpha) * t_last;
@@ -203,14 +293,14 @@ double Fill_HN(double g)
 		delta = fabs(temp1 - temp2);
 		cout<<"Ec_"<<i<<" = "<<temp2<<", d_Ec = "<<delta<<endl;
 		
-		i++;
+		i++; //COUNT THE ITERATION TIMES
 
-		if(i>1000) break;
+		if(i>1000) break; // IF IT CANNOT CONVERGE UNTIL 1000 ITERATIONS, BREAK OUT.
 
 	}while(delta>10e-9);
 
 
-	////////// Free HN and t_ijab/////////
+	////////// FREE HN and t_ijab MATRIX /////////
 	for(int i = 0; i<particle_no; i++)
 	{
 		for(int j =0; j<particle_no; j++)
@@ -251,7 +341,11 @@ int main()
 //		g = ((double)i)/20.;
 //		cout<<g<<" "<<Fill_HN(g)<<endl;
 //	}
-	Fill_HN(-0.5);
+	clock_t start = clock(); 
+	Fill_HN(-0.5);  
+	clock_t end = clock();
+    cout << "GetTickCount:" <<(double)(end-start)/CLOCKS_PER_SEC<<endl;  
+
 	return 0;
 
 }
