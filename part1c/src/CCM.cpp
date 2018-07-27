@@ -1,5 +1,10 @@
 
 #include "CCM.h"
+#include <fstream>
+#include <string>
+
+using std::ofstream;
+using std::to_string;
 
 CCM::CCM(int A, int N, double g, double d) : fA(A), fN(N),
 	fNu(N - A), fG(g), fD(d), fHamil(N - A, N - A, A, A),
@@ -16,14 +21,14 @@ CCM::CCM(int A, int N, double g, double d) : fA(A), fN(N),
 	FillMatrix::FillF(fFpp, fA, fG, fD); FillMatrix::FillF(fFhh, 0, fG, fD);
 	FillMatrix::FillT(fTpphh, fVpphh, fFpp, fFhh);
 
-	cout << "The Vpphh matrix: " << endl;
-	fVpphh.Print();
-	cout << "The Fpp matrix: " << endl;
-	fFpp.Print();
-	cout << "The Fhh matrix: " << endl;
-	fFhh.Print();
-	cout << "The Tpphh matrix " << endl;
-	fTpphh.Print();
+	// cout << "The Vpphh matrix: " << endl;
+	// fVpphh.Print();
+	// cout << "The Fpp matrix: " << endl;
+	// fFpp.Print();
+	// cout << "The Fhh matrix: " << endl;
+	// fFhh.Print();
+	// cout << "The Tpphh matrix " << endl;
+	// fTpphh.Print();
 }
 
 inline void Permute(int * i1, int * i2, int ind0, int ind1)
@@ -121,11 +126,19 @@ void CCM::ComputeH()
 
 void CCM::SolveT()
 {
-	double corr_en_pre = 1.;
-	double corr_en = 0.;
 	double factor = 1.;
 
-	while (fabs(corr_en - corr_en_pre) > 1E-5)
+	double corr_en_pre = 1.;
+	double corr_en = 0.;
+	vector<double> correlationEn;
+
+	int NStepsMax = 1E5;
+	int NSteps = 0;
+
+	ofstream corr_en_file(("results/corr_en-steps" + to_string(fN) + "_" + to_string(fA) + ".txt").c_str());
+
+
+	while (fabs(corr_en - corr_en_pre) > 1E-5 || NSteps > NStepsMax)
 	{	
 		ComputeH();
 		
@@ -138,13 +151,18 @@ void CCM::SolveT()
 					for (int j = 0; j < fA; j++)
 					{	
 						corr_en += 0.25 * fVhhpp(i, j, a, b) * fTpphh(a, b, i , j);
-						
+
 						double deno = fFhh(i, i) + fFhh(j, j) - fFpp(a, a) - fFpp(b, b);
 						double temp = fHamil(a, b, i, j) / deno;	
 
  						fTpphh(a, b, i, j) += factor * temp;
 					}
+
+		correlationEn.push_back(corr_en);
+		NSteps++;
+		corr_en_file << corr_en << endl;
 	}
+	corr_en_file.close();
 
 	cout << "The converged correlation energy is: " << corr_en << endl;
 }

@@ -31,7 +31,7 @@ int main()
 		file1 << g << "\t" << eigenVec00 << endl;
 	}
 
-	int nLevels = 8;
+	int nLevels = 10;
 	int particles = 4;
 
 	CCM coupled(particles, nLevels, .5, 1.);
