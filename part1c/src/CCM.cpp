@@ -76,7 +76,7 @@ void CCM::ComputeH()
 					// - b a i j
 					fHamil(a, b, i, j) +=
 					 	- 0.5 * fVhhpp.Prod4x4(fTpphh, i1 , i2).Prod4x4(fTpphh, i3, i4)(b, a, i, j);
-					
+
 					// b a j i
 					fHamil(a, b, i, j) +=
 						 0.5 * fVhhpp.Prod4x4(fTpphh, i1 , i2).Prod4x4(fTpphh, i3, i4)(b, a, j, i);

@@ -3,15 +3,27 @@
 #include "Tensor4.h"
 #include "Tensor2.h"
 
+using std::endl;
+using std::cout;
 
 Tensor4::Tensor4(int l1, int l2, int l3, int l4)
 	 : Tensor(l1 * l2 * l3 * l4, 0.0),
 	 fL1(l1), fL2(l2), fL3(l3), fL4(l4)
-{}
+{
+//		cout << "fL1: " << fL1 << "\tfL2:" << fL2 << "\tfL3: " << fL3 << "\tfL4: " << fL4 << endl;
+//		getchar();
+}
 
 double & Tensor4::operator()(int a, int b, int i, int j)
 {
-	return fTensor[ fL1 * fL2 * (fL3 * a + b) + fL1 * i + j];
+	int index = fL4 * fL3 * (fL2 * a + b) + fL4 * i + j;
+//	int index = fL3 * fL4 * (fL1 * a + b) + fL3 * i + j;
+	if(index >= fL1 * fL2 * fL3 * fL4){
+		cout << "a: " << a << "\tb: " << b << "\ti: " << i << "\tj: " << j << endl;
+		cout << "fL1: " << fL1 << "\tfL2:" << fL2 << "\tfL3: " << fL3 << "\tfL4: " << fL4 << endl;
+		cout << "index: " << index << "\tfL1 * fL2 * fL3 * fL4: " << fL1 * fL2 * fL3 * fL4 << endl; getchar();
+	}
+	return fTensor[index];
 }
 
 int Tensor4::GetL(int i) const
