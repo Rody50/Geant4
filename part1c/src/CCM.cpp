@@ -48,7 +48,7 @@ void CCM::ComputeH()
 				for (int j = 0; j < fA; j++)
 				{	
 					// term 1, 2 and 3
-					fHamil(a, b, i, j) += fVpphh(a, b, i, j)
+					fHamil(a, b, i, j) = fVpphh(a, b, i, j)
 						+ fFpp(b, b) * fTpphh(a, b, i, j) - fFpp(a, a) * fTpphh(b, a, i, j)
 						- fFhh(j, j) * fTpphh(a, b, i, j) + fFhh(i, i) * fTpphh(a, b, j, i);
 
@@ -121,13 +121,12 @@ void CCM::ComputeH()
 
 void CCM::SolveT()
 {
-
 	double corr_en_pre = 1.;
 	double corr_en = 0.;
-	double factor = .8;
+	double factor = 1.;
 
-	while (fabs(corr_en - corr_en_pre) > 1E-2)
-	{
+	while (fabs(corr_en - corr_en_pre) > 1E-5)
+	{	
 		ComputeH();
 		
 		corr_en_pre = corr_en;
@@ -141,19 +140,13 @@ void CCM::SolveT()
 						corr_en += 0.25 * fVhhpp(i, j, a, b) * fTpphh(a, b, i , j);
 						
 						double deno = fFhh(i, i) + fFhh(j, j) - fFpp(a, a) - fFpp(b, b);
-						double tmp = fHamil(a, b, i, j) / deno;
-						
-						fTpphh(a, b, i, j) += factor * tmp;
+						double temp = fHamil(a, b, i, j) / deno;	
+
+ 						fTpphh(a, b, i, j) += factor * temp;
 					}
-					
-					cout << "The new T matrix is: " << endl;
-					fTpphh.Print();
-					cout << endl;
-					cout << "The energy is:" << corr_en << endl;
-					cout << "The new value of delta corr energy is: " 
-							 << fabs(corr_en - corr_en_pre) << endl;
-					getchar();
 	}
+
+	cout << "The converged correlation energy is: " << corr_en << endl;
 }
 
 void CCM::Print()

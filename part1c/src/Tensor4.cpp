@@ -153,13 +153,13 @@ Tensor4 Tensor4::Prod4x2(const Tensor2 & t,
 
 void Tensor4::Print()
 {
-	//for (int a = 0; a < fL1; a++)
-	//	for (int b = 0; b < fL2; b++)
+	for (int a = 0; a < fL1; a++)
+		for (int b = 0; b < fL2; b++)
 		{
 			for (int i = 0; i < fL3; i++)
 				for (int j = 0; j < fL4; j++)
 				{
-					std::cout << (*this)(0, 1, i, j) << " \t";
+					std::cout << (*this)(a, b, i, j) << " \t";
 
 				}
 
