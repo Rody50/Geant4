@@ -32,7 +32,7 @@ int main()
 	}
 
 	int nLevels = 10;
-	int particles = 4;
+	int particles = 6;
 
 	CCM coupled(particles, nLevels, .5, 1.);
 	cout << "The Hamiltonian: " << endl;

@@ -5,6 +5,7 @@
 
 using std::ofstream;
 using std::to_string;
+using std::flush;
 
 CCM::CCM(int A, int N, double g, double d) : fA(A), fN(N),
 	fNu(N - A), fG(g), fD(d), fHamil(N - A, N - A, A, A),
@@ -156,6 +157,10 @@ void CCM::SolveT()
 						double temp = fHamil(a, b, i, j) / deno;	
 
  						fTpphh(a, b, i, j) += factor * temp;
+						cout << "a: " << a;
+						cout << "\tcorr_en: " << corr_en;
+						cout << " \tNSteps: " << NSteps;
+						cout << "\r" << flush;
 					}
 
 		correlationEn.push_back(corr_en);
