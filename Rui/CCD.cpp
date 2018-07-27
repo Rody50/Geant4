@@ -10,8 +10,8 @@
 
 using namespace std;
 
-const int particle_no = 10;
-const int n_mu = 10; // Available positions above Fermion
+const int particle_no = 4;
+const int n_mu = 4; // Available positions above Fermion
 const double epsilon = 1.0;
 
 /////// Fuction <rs|V|pq> ////////
@@ -271,6 +271,7 @@ double Fill_HN(double g)
 		///// RENEW t_ijab MATRIX ELEMENTS /////
 		//////**** HERE we should use MIXING !!!****///////
 		//**** t(i) = a * t_no_mixing(i) + (1-a) * t(i-1) ****//
+		//**** ALTERNATIVE CHOICE, WHICH IS IDENTICAL t(i) = t(i-1) + a * H_bar / (f_aa + f_bb + f_ii + f_jj) //
 		for(int i = 0; i<particle_no; i++) 
 		{
 			for(int j = 0; j<particle_no; j++)
@@ -279,10 +280,11 @@ double Fill_HN(double g)
 				{
 					for(int b = particle_no; b < (particle_no + n_mu); b++)
 					{
-				//		t_ijab[i][j][a-particle_no][b-particle_no] -= HN_bar[i][j][a-particle_no][b-particle_no] / (f_pq(a,a,g) + f_pq(b,b,g) - f_pq(i,i,g) - f_pq(j,j,g));
+					//	t_ijab[i][j][a-particle_no][b-particle_no] -= alpha * HN_bar[i][j][a-particle_no][b-particle_no] / (f_pq(a,a,g) + f_pq(b,b,g) - f_pq(i,i,g) - f_pq(j,j,g));
 						t_last = t_ijab[i][j][a-particle_no][b-particle_no];
 						t_no_this = t_ijab[i][j][a-particle_no][b-particle_no] - HN_bar[i][j][a-particle_no][b-particle_no] / (f_pq(a,a,g) + f_pq(b,b,g) - f_pq(i,i,g) - f_pq(j,j,g));
 						t_ijab[i][j][a-particle_no][b-particle_no] = alpha * t_no_this + (1-alpha) * t_last;
+					
 					}
 				}
 			}
@@ -342,7 +344,7 @@ int main()
 //		cout<<g<<" "<<Fill_HN(g)<<endl;
 //	}
 	clock_t start = clock(); 
-	Fill_HN(-0.5);  
+	Fill_HN(-1.0);  
 	clock_t end = clock();
     cout << "GetTickCount:" <<(double)(end-start)/CLOCKS_PER_SEC<<endl;  
 
