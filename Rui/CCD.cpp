@@ -271,7 +271,7 @@ double Fill_HN(double g)
 		///// RENEW t_ijab MATRIX ELEMENTS /////
 		//////**** HERE we should use MIXING !!!****///////
 		//**** t(i) = a * t_no_mixing(i) + (1-a) * t(i-1) ****//
-		//**** ALTERNATIVE CHOICE, WHICH IS IDENTICAL t(i) = t(i-1) + a * H_bar / (f_aa + f_bb + f_ii + f_jj) //
+		//**** ALTERNATIVE CHOICE, WHICH IS IDENTICAL t(i) = t(i-1) + a * H_bar / (f_aa + f_bb + f_ii + f_jj) *****//
 		for(int i = 0; i<particle_no; i++) 
 		{
 			for(int j = 0; j<particle_no; j++)
