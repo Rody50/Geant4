@@ -14,13 +14,20 @@ using std::vector;
 using std::cout;
 using std::endl;
 
+const double PI = 3.14159265357;
 
 struct qState
 {
-	int kx;
-	int ky;
-	int kz;
-	int s;
+	double nx;
+	double ny;
+	double nz;
+	int two_s;
+};
+
+struct conState
+{
+	int part1;
+	int part2;
 };
 
 
@@ -29,14 +36,17 @@ class InfiniteMatterSP
 
 	private:
 		vector<qState> fStates;
+		vector<conState> fConStates;
 		int fNmax;
-		int fNmagic;
+		int fNShell;
 		double fRho;
 
 	public:
-		InfiniteMatterSP(int Nmax, int Nmagic, double rho);
+		InfiniteMatterSP(int Nmax, int nShell, double rho);
 
 		void GenerateSP();
+
+		void Connected();
 
 		void Print();
 };
