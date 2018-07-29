@@ -31,12 +31,11 @@ int main()
 		file1 << g << "\t" << eigenVec00 << endl;
 	}
 
-	int nLevels = 10;
-	int particles = 6;
+	int nLevels = 16;
+	int particles = 4;
 
 	CCM coupled(particles, nLevels, .5, 1.);
 	cout << "The Hamiltonian: " << endl;
-	//coupled.Print();
 	coupled.SolveT();
 	
 }

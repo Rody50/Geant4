@@ -57,6 +57,8 @@ Tensor4 Tensor4::Prod4x4(Tensor4 & t,
 			for (int i3 = 0; i3 < iMax[2]; i3++)
 				for (int i4 = 0; i4 < iMax[3]; i4++)
 				{
+					//if(iMax[0] == iMax[1] && iMax[2] == iMax[3])
+						//if (!(i1 / 2 == i2 / 2 && i3 / 2 == i4 / 2)) continue;
 					double result_temp = 0.; 
 
 					for (int i = 0; i < iMax[4]; i++)
@@ -98,6 +100,8 @@ Tensor2 Tensor4::Prod4x4s3(Tensor4 & t,
 	for (int i1 = 0; i1 < iMax[0]; i1++)
 		for (int i2 = 0; i2 < iMax[1]; i2++)
 		{
+			if(iMax[0] == iMax[1])
+				if (!(i1 / 2 == i2 / 2)) continue;
 			double result_temp = 0.; 
 
 			for (int i = 0; i < iMax[2]; i++)
@@ -141,6 +145,9 @@ Tensor4 Tensor4::Prod4x2(const Tensor2 & t,
 			for (int i3 = 0; i3 < iMax[2]; i3++)
 				for (int i4 = 0; i4 < iMax[3]; i4++)
 				{
+					if(iMax[0] == iMax[1] && iMax[2] == iMax[3])
+						if (!(i1 / 2 == i2 / 2 && i3 / 2 == i4 / 2)) continue;
+
 					double result_temp = 0.; 
 					for (int i = 0; i < iMax[4]; i++)
 					{								

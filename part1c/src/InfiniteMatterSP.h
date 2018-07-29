@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
 
 using std::string;
 using std::vector;
@@ -14,7 +15,7 @@ using std::cout;
 using std::endl;
 
 
-struct quantumNumber
+struct qState
 {
 	int kx;
 	int ky;
@@ -27,25 +28,17 @@ class InfiniteMatterSP
 {
 
 	private:
-		vector<quantumNumber> fStates;
-		int fN;
+		vector<qState> fStates;
+		int fNmax;
+		int fNmagic;
+		double fRho;
 
 	public:
-		InfiniteMatterSP(int N);
+		InfiniteMatterSP(int Nmax, int Nmagic, double rho);
 
-		// void setfN(int N);
+		void GenerateSP();
 
-		// void GenerateSPS();
-
-		// int getn(int i);
-
-		// int getl(int i);
-
-		// int getTwo_j(int i);
-
-		// int getTwo_m(int i);
-
-		// void print();
+		void Print();
 };
 
 #endif // INFINITEMATTERSP_H
