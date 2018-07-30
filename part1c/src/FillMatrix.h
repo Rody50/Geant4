@@ -26,7 +26,9 @@ class FillMatrix
 
 		static void FillV(Tensor4 & v, double g);
 
-		static void FillF(Tensor2 & f, int A, double g, double d);
+		static void FillV(Tensor4 & vpppp, Tensor4 & vpphh,
+	Tensor4 & vhhpp, Tensor4 & vhhhh, P_group_t * p, vector<qState> & s)
+			static void FillF(Tensor2 & f, int A, double g, double d);
 
 		static void FillT(Tensor4 & t, Tensor4 & v, Tensor2 & fp,
 			Tensor2 & fh);

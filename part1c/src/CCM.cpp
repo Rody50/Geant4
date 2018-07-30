@@ -43,9 +43,9 @@ CCM::CCM(P_group_t *p) : fN(p->N()),
 	fFpp(N - A, N - A),
 	fFhh(A, A)
 {
-	FillMatrix::FillV(fVpppp, fVpphh, fVhhpp, fVhhhh);
+	FillMatrix::FillV(fVpppp, fVpphh, fVhhpp, fVhhhh, p);
 	FillMatrix::FillF(fFpp, fA, fG, fD); FillMatrix::FillF(fFhh, 0, fG, fD);
-	FillMatrix::FillT(fTpphh, fVpphh, fFpp, fFhh);
+	FillMatrix::FillT(fTpphh);
 }
 
 
