@@ -5,6 +5,8 @@
 #include "Tensor2.h"
 #include "Tensor4.h"
 #include "FillMatrix.h"
+#include "InfiniteMatterSP.h"
+
 
 class CCM
 {
@@ -18,10 +20,11 @@ class CCM
 
 	public:
 		CCM(int A, int N, double g, double d);
+		CCM(P_group_t *p);
 
 		void ComputeH();
 
-		void SolveT();
+		double SolveT(); // return correlation energy
 
 		void Print();
 

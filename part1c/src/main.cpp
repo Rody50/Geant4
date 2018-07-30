@@ -1,5 +1,6 @@
 #include "SingleParticleState.h"
 #include "PairingConfiguration.h"
+#include "InfiniteMatterSP.h"
 #include "FCI.h"
 #include "CCM.h"
 
@@ -34,8 +35,16 @@ int main()
 	int nLevels = 16;
 	int particles = 4;
 
-	CCM coupled(particles, nLevels, .5, 1.);
-	cout << "The Hamiltonian: " << endl;
-	coupled.SolveT();
+//	CCM coupled(particles, nLevels, .5, 1.);
+//	cout << "The Hamiltonian: " << endl;
+//	coupled.SolveT();
+	
+	int nshell = 2, NMax = 1;
+	double rho = 0.08; // nucleon density      unit: fm^-3
+	InfiniteMatterSP spMatter(NMax, nshell, rho);
+	spMatter.GenerateSP();
+	spMatter.Print();
+	spMatter.ConstructPairs();
+
 	
 }
