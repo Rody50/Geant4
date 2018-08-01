@@ -26,7 +26,7 @@ CCMInf::CCMInf(P_group_t *p, InfiniteMatterSP *infSP) : fN(p->npp),
 //	getchar();
 	FillMatrix::FillT(fTpphh, p, this);
 	//cout << "fTpphh: " << endl;
-	//fTpphh.print();
+	fTpphh.print();
 	//cout << endl << endl;
 //	getchar();
 }
@@ -86,17 +86,18 @@ void CCMInf::Interm()
 
 	for (int a = 0; a < size; a++) // loop over row
 	{
+		qState * sa = & s[fP->pr[a].i];
+		qState * sb = & s[fP->pr[a].j];
+		bool isHoleA = sa->isHole;
+		bool isHoleB = sb->isHole;
 		if(isHoleA && isHoleB) continue;
 		int pphhI = 0;
 		for (int i = 0; i < size; i++) //  loop over column
 		{
-			qState * sa = & s[fP->pr[a].i];
-			qState * sb = & s[fP->pr[a].j];
+
 			qState * si = & s[fP->pr[i].i];
 			qState * sj = & s[fP->pr[i].j];
 
-			bool isHoleA = sa->isHole;
-			bool isHoleB = sb->isHole;
 			bool isHoleI = si->isHole;
 			bool isHoleJ = sj->isHole;
 
@@ -147,17 +148,19 @@ double CCMInf::SolveT()
 
 		for (int a = 0; a < size; a++) // loop over row
 		{
+			qState * sa = & s[fP->pr[a].i];
+			qState * sb = & s[fP->pr[a].j];
+			bool isHoleA = sa->isHole;
+			bool isHoleB = sb->isHole;
 			if(isHoleA && isHoleB) continue;
 			int pphhI = 0;
 			for (int i = 0; i < size; i++) //  loop over column
 			{
-				qState * sa = & s[fP->pr[a].i];
-				qState * sb = & s[fP->pr[a].j];
+
 				qState * si = & s[fP->pr[i].i];
 				qState * sj = & s[fP->pr[i].j];
 
-				bool isHoleA = sa->isHole;
-				bool isHoleB = sb->isHole;
+
 				bool isHoleI = si->isHole;
 				bool isHoleJ = sj->isHole;
 

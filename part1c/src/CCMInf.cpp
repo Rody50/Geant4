@@ -25,8 +25,8 @@ CCMInf::CCMInf(P_group_t *p, InfiniteMatterSP *infSP) : fN(p->npp),
 	//fVpphh.print();
 //	getchar();
 	FillMatrix::FillT(fTpphh, p, this);
-	//cout << "fTpphh: " << endl;
-	//fTpphh.print();
+	cout << "fTpphh: " << endl;
+	fTpphh.print();
 	//cout << endl << endl;
 //	getchar();
 }
