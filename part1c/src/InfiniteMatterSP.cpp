@@ -191,8 +191,8 @@ double InfiniteMatterSP::CorrelationEnergy()
 	//				p->print(fStates);
 
 				cout << "(nx, ny, nz): ";
-				cout << "(" << nx << "," << ny << "," << nz << ")";
-				cout << "\tcorr_en: " << tmp << endl;
+				cout << "(" << nx << "," << ny << "," << nz << ")   ";
+				cout << "corr_en: " << tmp << endl;
 			} // end for over k
 		} // end for over j
 	} // end for over i
