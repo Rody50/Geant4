@@ -17,10 +17,10 @@ using std::cout;
 using std::endl;
 
 const double PI = 3.14159265357;
-const double KAPPAR = 1.5, KAPPAS = 0.5, KAPPAT = 0.6;
-const double VR = 200, VS = -90, VT = -180;
+const double KAPPAR = 1.487, KAPPAS = 0.465, KAPPAT = 0.639;
+const double VR = 200., VS = -91.85, VT = -178.;
 const double hbarc = 197.326; // MeV * fm
-const double nmass = 939.565; // MeV / c^2
+const double nmass = 938.92; //939.565; // MeV / c^2
 
 class CCMInf;
 
@@ -29,7 +29,7 @@ struct qState
 	short nx, ny, nz, nshell;
 	bool isUp, isHole;
 
-	short spin()
+	short spin() const
 	{
 		return 2 * isUp - 1;
 	}
@@ -89,7 +89,9 @@ class InfiniteMatterSP{
 		P_group_t *P(int nX, int nY, int nZ);
 		double CorrelationEnergy();
 		void Print() const;
-		double Minnesota(const pair_t * t, const pair_t * s);
+	double Minnesota(const pair_t * t, const pair_t * s);
+	double Minnesota(const qState &ti, const qState &tj,
+		const qState &si, const qState &sj);
 
 	private:
 		vector<qState> fStates;
@@ -128,7 +130,7 @@ struct P_group_t
 	void print(const vector<qState> &s) const{
 		cout << "(Px,Py,Pz): " << "(" << P[0] << ",";
 		cout << P[1] << "," << P[2] << ")" << endl;
-		return;
+//		return;
 		cout << "npp: " << npp;
 		cout << "\t nph: " << nph << "\tnhh: " << nhh << endl;
 		for(int i = 0; i < np; i++){

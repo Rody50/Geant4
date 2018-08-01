@@ -19,32 +19,34 @@ int main()
 	hamiltonian.GenerateMatrix(1.0, 1.0);
 //	hamiltonian.Print();
 	
-	double g = -1.;
-	double eigenVec00, eigenVal0;
-	std::ofstream file0("results/eigVal0_10.txt");
-	std::ofstream file1("results/eigVec00_10.txt");
+	// double g = -1.;
+	// double eigenVec00, eigenVal0;
+	// std::ofstream file0("results/eigVal0_10.txt");
+	// std::ofstream file1("results/eigVec00_10.txt");
 	
-	for(int i = 0 ; i < 21; i++){
-		g += 0.1;
-		hamiltonian.GenerateMatrix(g, 1.0);
-		hamiltonian.eigenValue(eigenVal0, eigenVec00);
-		file0 << g << "\t" << eigenVal0 - (2*1.0-g) << endl;
-		file1 << g << "\t" << eigenVec00 << endl;
-	}
+	// for(int i = 0 ; i < 21; i++){
+	// 	g += 0.1;
+	// 	hamiltonian.GenerateMatrix(g, 1.0);
+	// 	hamiltonian.eigenValue(eigenVal0, eigenVec00);
+	// 	file0 << g << "\t" << eigenVal0 - (2*1.0-g) << endl;
+	// 	file1 << g << "\t" << eigenVec00 << endl;
+	// }
 
-	int nLevels = 16;
-	int particles = 4;
+	// int nLevels = 16;
+	// int particles = 4;
 
 //	CCM coupled(particles, nLevels, .5, 1.);
 //	cout << "The Hamiltonian: " << endl;
 //	coupled.SolveT();
 	
-	int nshell = 2, NMax = 1;
+	int nshell = 0, NMax = 2;
 	double rho = 0.08; // nucleon density      unit: fm^-3
 	InfiniteMatterSP spMatter(NMax, nshell, rho);
 	spMatter.GenerateSP();
 	spMatter.Print();
 	spMatter.ConstructPairs();
+	cout << "The total correlation energy is: " 
+		 << spMatter.CorrelationEnergy() << endl;
 
 	
 }
