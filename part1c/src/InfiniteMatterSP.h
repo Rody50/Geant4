@@ -19,11 +19,20 @@ using std::endl;
 const double PI = 3.14159265357;
 const double KAPPAR = 1.5, KAPPAS = 0.5, KAPPAT = 0.6;
 const double VR = 200, VS = -90, VT = -180;
+const double hbarc = 197.326; // MeV * fm
+const double nmass = 939.565; // MeV / c^2
+
+class CCMInf;
 
 struct qState
 {
 	short nx, ny, nz, nshell;
 	bool isUp, isHole;
+
+	short spin()
+	{
+		return 2 * isUp - 1;
+	}
 
 	double r(){
 		return sqrt(nx*nx + ny*ny + nz*nz);
@@ -41,11 +50,20 @@ struct pair_t
 {
 	int i, j;
 
-	double rp(int ii, const vector<qState> &s)
+	int P(int ii, const vector<qState> &s) const
+	{
+		if(ii == 0) return s[i].nx + s[j].nx;
+		if(ii == 1) return s[i].ny + s[j].ny;
+		if(ii == 2) return s[i].nz + s[j].nz;
+		return 0.;
+	}
+
+	double rp(int ii, const vector<qState> &s) const
 	{
 		if(ii == 0) return s[i].nx - s[j].nx;
 		if(ii == 1) return s[i].ny - s[j].ny;
 		if(ii == 2) return s[i].nz - s[j].nz;
+		return 0.;
 	}
 
 	void print(const vector<qState> &s) const
@@ -54,6 +72,34 @@ struct pair_t
 		s[i].print();
 		s[j].print();
 	}
+};
+
+struct P_group_t;
+
+class InfiniteMatterSP{
+	
+	public:
+		InfiniteMatterSP(int Nmax, int nShell, double rho);
+		~InfiniteMatterSP();
+		void GenerateSP();
+		double GetfEnUn(){return fEnUn;}
+		vector<qState> & GetfStates(){return fStates;}
+		void ConstructPairs();
+		// get the P group by (nX,nY,nZ)
+		P_group_t *P(int nX, int nY, int nZ);
+		double CorrelationEnergy();
+		void Print() const;
+		double Minnesota(const pair_t * t, const pair_t * s);
+
+	private:
+		vector<qState> fStates;
+		const int fNmax;
+		const int fNShell; // zero -> 2 singleSP states, itself included
+		int fA, fNSP; // number of particles & single SP states
+		double fRho; // nucleon density      unit: fm^-3
+		P_group_t *fP; // pair grouped by total P
+		double fL;
+		double fEnUn;
 };
 
 struct P_group_t
@@ -77,7 +123,7 @@ struct P_group_t
 	}
 	double N()
 	{
-		return A() + H();
+		return A() + Nu();
 	}
 	void print(const vector<qState> &s) const{
 		cout << "(Px,Py,Pz): " << "(" << P[0] << ",";
@@ -89,30 +135,7 @@ struct P_group_t
 			pr[i].print(s);
 		} // end for over i
 	}
-	void CorrelationEnergy(); // for CCD calculation
-};
-
-class InfiniteMatterSP{
-	
-	public:
-		InfiniteMatterSP(int Nmax, int nShell, double rho);
-		~InfiniteMatterSP();
-		void GenerateSP();
-		void ConstructPairs();
-		// get the P group by (nX,nY,nZ)
-		P_group_t *P(int nX, int nY, int nZ);
-		double CorrelationEnergy();
-		void Print() const;
-		double Minnesota(const pair_t * t, const pair_t * s);
-
-	private:
-		vector<qState> fStates;
-		const int fNmax;
-		const int fNShell; // zero -> 2 singleSP states, itself included
-		int fA, fNSP; // number of particles & single SP states
-		double fRho; // nucleon density      unit: fm^-3
-		P_group_t *fP; // pair grouped by total P
-		const double fL;
+	double CorrelationEnergy(InfiniteMatterSP *infSP); // for CCD calculation
 };
 
 #endif // INFINITEMATTERSP_H

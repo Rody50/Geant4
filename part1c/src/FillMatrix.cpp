@@ -2,7 +2,7 @@
 #include "FillMatrix.h"
 #include "Tensor2.h"
 #include "Tensor4.h"
-#include "InfiniteMatterSP.h"
+#include "CCMInf.h"
 
 
 FillMatrix::FillMatrix()
@@ -30,41 +30,47 @@ void FillMatrix::FillV(Tensor4 & v, double g)
 				}
 }
 
-void FillMatrix::FillV(Tensor4 & vpppp, Tensor4 & vpphh,
-	Tensor4 & vhhpp, Tensor4 & vhhhh, P_group_t * p, vector<qState> & s)
+void FillMatrix::FillV(mat & vpppp, mat & vpphh,
+	mat & vhhhh, P_group_t * p, InfiniteMatterSP *InfSP_p)
 {
+	vector<qState> &s = InfSP_p->GetfStates();
 	int size = p->np;
-	int hhhhA = 0, pphhA = 0, hhppA = 0, ppppA = 0;
+	int hhhhA = 0, pphhA = 0, ppppA = 0;
 
-	for (int a = 0; a < size; a++)
-	{	
-		int hhhhI = 0, pphhI = 0, hhppI = 0, ppppI = 0;
-		for (int i = 0; i < size; i++)
+	for (int a = 0; a < size; a++) // loop over row
+	{
+		int hhhhI = 0, pphhI = 0, ppppI = 0;
+		for (int i = 0; i < size; i++) //  loop over column
 		{
-			qState * sa = & s[p->pr[i].i];
-			qState * sb = & s[p->pr[i].j];
-			qState * si = & s[p->pr[j].i];
-			qState * sj = & s[p->pr[j].j];
+			qState * sa = & s[p->pr[a].i];
+			qState * sb = & s[p->pr[a].j];
+			qState * si = & s[p->pr[i].i];
+			qState * sj = & s[p->pr[i].j];
 
-			bool isHoleA = sa.isHole;
-			bool isHoleB = sb.isHole;
-			bool isHoleI = si.isHole;
-			bool isHoleJ = sj.isHole;
+			bool isHoleA = sa->isHole;
+			bool isHoleB = sb->isHole;
+			bool isHoleI = si->isHole;
+			bool isHoleJ = sj->isHole;
 
 			if (isHoleA && isHoleB && isHoleI && isHoleJ)
 			{
-				vhhhh() = Minnesota(p->pr[i], p->pr[j]);
-				vhhhh() = - vhhhh();
-				vhhhh() = - vhhhh();
-				vhhhh() = vhhhh();
+				vhhhh(hhhhA + hhhhI * size) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i]);
+				hhhhI++;
 			}
 			if (!isHoleA && !isHoleB && isHoleI && isHoleJ)
-				vpphh();
-			if (isHoleA && isHoleB && !isHoleI && !isHoleJ)
-				vhhpp();
+			{	
+				vpphh(pphhA + pphhI * size) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i]);
+				pphhI++;
+			}
 			if (!isHoleA && !isHoleB && !isHoleI && !isHoleJ)
-				vpp pp();
+			{
+				vpppp(ppppA + ppppI * size) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i]);
+				ppppI++;
+			}
 		}
+		if (hhhhI) hhhhA++; 
+		if (pphhI) pphhA++; 
+		if (ppppI) ppppA++;
 	}
 }
 
@@ -106,6 +112,40 @@ void FillMatrix::FillT(Tensor4 & t, Tensor4 & v, Tensor2 & fp,
 				}
 }
 
+void FillMatrix::FillT(mat & tpphh,
+	P_group_t * p, CCMInf *CCMInf_p)
+{
+	InfiniteMatterSP *InfSP_p = CCMInf_p->GetfInfSP();
+	vector<qState> &s = InfSP_p->GetfStates();
+	int size = p->np;
+	int pphhA = 0;
+
+	for (int a = 0; a < size; a++) // loop over row
+	{
+		int pphhI = 0;
+		for (int i = 0; i < size; i++) //  loop over column
+		{
+			qState * sa = & s[p->pr[a].i];
+			qState * sb = & s[p->pr[a].j];
+			qState * si = & s[p->pr[i].i];
+			qState * sj = & s[p->pr[i].j];
+
+			bool isHoleA = sa->isHole;
+			bool isHoleB = sb->isHole;
+			bool isHoleI = si->isHole;
+			bool isHoleJ = sj->isHole;
+
+			if (!isHoleA && !isHoleB && isHoleI && isHoleJ)
+			{	
+				tpphh(pphhA + pphhI * size) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i])
+					/ CCMInf_p->FSum(&p->pr[a], &p->pr[i]);
+				pphhI++;
+			}
+
+		}
+		if (pphhI) pphhA++; 	
+	}	
+}
 // void FillMatrix::Print()
 // {
 // 	fConfigObj.Print();

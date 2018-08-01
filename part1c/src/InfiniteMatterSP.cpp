@@ -1,8 +1,9 @@
 #include "InfiniteMatterSP.h"
-#include "CCM.h"
+#include "CCMInf.h"
 
 InfiniteMatterSP::InfiniteMatterSP(int Nmax, int nShell, double rho) : 
-		fNmax(Nmax), fNShell(nShell), fA(0), fNSP(0), fRho(rho)
+		fNmax(Nmax), fNShell(nShell), fA(0), fNSP(0), fRho(rho), fL(0),
+		fEnUn(0)
 {
 	if(nShell > 20){
 		cout << "nShell too large (has to be < 20): " << nShell << endl;
@@ -17,9 +18,19 @@ InfiniteMatterSP::~InfiniteMatterSP()
 	delete [] fP;
 }
 
+inline double r2(int x, int y, int z)
+{
+	return x*x+y*y+z*z;
+}
+
 inline double r(int x, int y, int z)
 {
-	return sqrt(x*x+y*y+z*z);
+	return sqrt(r2(x,y,z));
+}
+
+inline int delta(int i, int j)
+{
+	return i == j;
 }
 
 static const double RSHELL[20] = {
@@ -55,6 +66,10 @@ void InfiniteMatterSP::GenerateSP()
 		} // end for over ny
 	} // end for over nx
 	fNSP = fStates.size();
+
+	fL = pow(fA / fRho, 1 / 3.);
+	fEnUn = 2 * PI * PI * hbarc * hbarc / (nmass * fL * fL); 
+
 }
 
 P_group_t *InfiniteMatterSP::P(int nX, int nY, int nZ)
@@ -108,13 +123,14 @@ void InfiniteMatterSP::ConstructPairs()
 	} // DEBUG
 } // end of member function ConstructPair
 
-double P_group_t::CorrelationEnergy(){
-	return CCM(this).SolveT();
+double P_group_t::CorrelationEnergy(InfiniteMatterSP *InfSP){
+	return CCMInf(this, InfSP).SolveT();
 }
 
 double InfiniteMatterSP::CorrelationEnergy()
 {
 	const int n = pow(4*fNmax + 1, 3);
+	double corr_en = 0.;
 	
 	for(int i = 0; i < n; i++){
 		for(int j = 0; j < n; j++){
@@ -122,7 +138,7 @@ double InfiniteMatterSP::CorrelationEnergy()
 				cout << "i: " << i;
 				cout << "\tj: " << j;
 				cout << "\tk: " << k << endl;
-				corr_en += P(i - 2*fNmax, j - 2*fNmax, k - 2*fNmax)->CorrelationEnergy();
+				corr_en += P(i - 2*fNmax, j - 2*fNmax, k - 2*fNmax)->CorrelationEnergy(this);
 				cout << "corr_en: " << corr_en << endl;
 				getchar();
 			} // end for over k
@@ -148,45 +164,58 @@ void InfiniteMatterSP::Print() const
 	cout << "Done!" << endl;
 }
 
-inline int delta(int i, int j)
+double InfiniteMatterSP::Minnesota(const pair_t * t, const pair_t * s)
 {
-	return i == j;
+	short spin[2][2] = { // [pair][qState]
+		{fStates[t->i].spin(), fStates[t->j].spin()},
+		{fStates[s->i].spin(), fStates[s->j].spin()}
+	};
+	if(spin[0][0]*spin[0][1] > 0) return 0.; // spin triplet
+	if(spin[1][0]*spin[1][1] > 0) return 0.; // spin triplet
+
+	// anti-symmetrization
+	short sign = 1;
+	if(spin[0][0] == +1 && spin[0][1] == -1 && 
+		 spin[1][0] == +1 && spin[1][1] == -1) sign = +1.; // <+-|V|+->
+
+	if(spin[0][0] == +1 && spin[0][1] == -1 && 
+		 spin[1][0] == -1 && spin[1][1] == +1) sign = -1.; // <+-|V|-+>
+
+	if(spin[0][0] == -1 && spin[0][1] == +1 && 
+		 spin[1][0] == +1 && spin[1][1] == -1) sign = -1.; // <-+|V|+->
+
+	if(spin[0][0] == -1 && spin[0][1] == +1 && 
+		 spin[1][0] == -1 && spin[1][1] == +1) sign = +1.; // <-+|V|-+>
+
+	int qij[3], qji[3];
+	for(int i = 0; i < 3; i++){
+		if(t->P(i, fStates) != s->P(i, fStates)) return 0.; // momentum conservation law
+		qij[i] =  t->rp(i, fStates) - s->rp(i, fStates);
+		qji[i] = -t->rp(i, fStates) - s->rp(i, fStates);
+	}
+
+	int q2ij = r2(qij[0], qij[1], qij[2]);
+	int q2ji = r2(qji[0], qji[1], qji[2]);
+
+	static double fact = 2 * PI / fL;
+	const double v = 0.5 *
+		( // ij term
+		(VR / pow(fL, 3.) * pow(PI / KAPPAR, 3. / 2)
+		* exp(-q2ij / (4 * KAPPAR))
+		+ VS / pow(fL, 3.) * pow(PI / KAPPAS, 3. / 2)
+		* exp(-q2ij / (4 * KAPPAS)))
+		
+		 + 
+		 
+		// ji term
+		(VR / pow(fL, 3.) * pow(PI / KAPPAR, 3. / 2)
+		* exp(-q2ji / (4 * KAPPAR))
+		+ VS / pow(fL, 3.) * pow(PI / KAPPAS, 3. / 2)
+		* exp(-q2ji / (4 * KAPPAS)))
+		);
+		//*(delta(spin[0][0], spin[1][0]) * delta(spin[0][1], spin[1][1]) 
+		//- delta(spin[0][0], spin[1][1]) * delta(spin[0][1], spin[1][0]));
+		
+		return v * sign;
 }
 
-double InfiniteMatter::Minnesota(const pair_t * t, const pair_t * s)
-{
-	double L = pow(fNSP * fRho, 1 / 3.); 
-	double fact = 2 * PI / L;
-
-	double npRelx = rp(t.i, fStates);
-	double npRely = rp(t.i, fStates);
-	double npRelz = rp(t.i, fStates);
-	double nqRelx = rp(t.j, fStates);
-	double nqRely = rp(t.j, fStates);
-	double nqRelz = rp(t.j, fStates);
-
-	double nrRelx = rp(s.i, fStates);
-	double nrRely = rp(s.i, fStates);
-	double nrRelz = rp(s.i, fStates);
-	double nsRelx = rp(s.j, fStates);
-	double nsRely = rp(s.j, fStates);
-	double nsRelz = rp(s.j, fStates); 
-
-	double qx = fact * (npRelx - nqRelx + nrRelx + nsRelx);
-	double qy = fact * (npRely - nqRely + nrRely + nsRely);
-	double qz = fact * (npRelz - nqRelz + nrRelz + nsRelz);
-
-	return (VR / pow(L, 3.) * pow(PI / KAPPAR, 2 / 3.) 
-		* exp((qx*qx + qy*qy + qz*qz) / (4 * KAPPAR))
-		//
-		+ VS / pow(L, 3.) * pow(PI / KAPPAS, 2 / 3.) 
-		* exp((qx*qx + qy*qy + qz*qz) / (4 * KAPPAS)))
-		//
-		* delta(knRelx + nqRelx, nrRelx + nsRelx)
-		* delta(knRely + nqRely, nrRely + nsRely)
-		* delta(knRelz + nqRelz, nrRelz + nsRelz)
-		* (fStates[t.i].isUp && fStates[s.i].isUp 
-			* fStates[t.j].isUp && fStates[s.j].isUp
-			- fStates[t.i].isUp && fStates[s.j].isUp
-			* fStates[t.j].isUp && fStates[s.i].isUp);
-}

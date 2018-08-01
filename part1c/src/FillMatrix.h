@@ -9,14 +9,18 @@
 #include <cmath>
 #include <bitset>
 #include <cstdlib>
+#include <armadillo>
+#include "InfiniteMatterSP.h"
 
 using std::string;
 using std::vector;
 using std::cout;
 using std::endl;
+using namespace arma;
 
 class Tensor2;
 class Tensor4;
+class CCMInf;
 
 class FillMatrix
 {
@@ -26,12 +30,16 @@ class FillMatrix
 
 		static void FillV(Tensor4 & v, double g);
 
-		static void FillV(Tensor4 & vpppp, Tensor4 & vpphh,
-	Tensor4 & vhhpp, Tensor4 & vhhhh, P_group_t * p, vector<qState> & s)
-			static void FillF(Tensor2 & f, int A, double g, double d);
+		static void FillV(mat & vpppp, mat & vpphh, mat & vhhhh,
+			P_group_t * p, InfiniteMatterSP *obj);
+		
+		static void FillF(Tensor2 & f, int A, double g, double d);
 
 		static void FillT(Tensor4 & t, Tensor4 & v, Tensor2 & fp,
 			Tensor2 & fh);
+
+		static void FillT(mat & tpphh,
+			P_group_t * p, CCMInf *obj);
 
 		static bool IsPair(int a, int b);
 };

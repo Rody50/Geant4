@@ -20,6 +20,7 @@ class CCM
 
 	public:
 		CCM(int A, int N, double g, double d);
+		
 		CCM(P_group_t *p);
 
 		void ComputeH();

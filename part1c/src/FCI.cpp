@@ -41,6 +41,7 @@ void FCI::GenerateMatrix(double g, double d)
 		{
 			double ME = 
 				MatrixElement(fConfiguration[i], fConfiguration[j], g, d);
+			
 			(*fHamiltonian)(i + j * dim) = ME;
 			
 			if (i != j)

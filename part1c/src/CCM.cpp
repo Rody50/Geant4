@@ -32,23 +32,6 @@ CCM::CCM(int A, int N, double g, double d) : fA(A), fN(N),
 	// fTpphh.Print();
 }
 
-CCM::CCM(P_group_t *p) : fN(p->N()),
-	fA(p->A()), fNu(fN - fA),
-	fHamil(N - A, N - A, A, A),
-	fVpppp(N - A, N - A, N - A, N - A),	
-	fVpphh(N - A, N - A, A, A), 
-	fVhhpp(A, A, N - A, N - A), 
-	fVhhhh(A, A, A, A),
-	fTpphh(N - A, N - A, A, A),
-	fFpp(N - A, N - A),
-	fFhh(A, A)
-{
-	FillMatrix::FillV(fVpppp, fVpphh, fVhhpp, fVhhhh, p);
-	FillMatrix::FillF(fFpp, fA, fG, fD); FillMatrix::FillF(fFhh, 0, fG, fD);
-	FillMatrix::FillT(fTpphh);
-}
-
-
 inline void Permute(int * i1, int * i2, int ind0, int ind1)
 {
 	for(int i = 0; i < 4; i++)

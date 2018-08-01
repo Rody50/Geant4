@@ -1,5 +1,5 @@
 # project name (generates executable with this name)
-TARGET = Diagonalization
+TARGET = talent
 
 CC=g++
 # compiling flags
@@ -12,8 +12,8 @@ LDFLAGS=-larmadillo
 LIBS=-lm -larmadillo -llapack -lblas
 
 # compilation options for ROOT
-RO=$(shell root-config --cflags) $(shell root-config --libs)
-ROOTINC=$(shell root-config --incdir)
+#RO=$(shell root-config --cflags) $(shell root-config --libs)
+#ROOTINC=$(shell root-config --incdir)
 #LIBS+=$(RO)
 
 # specific directories for each extension
@@ -31,7 +31,7 @@ $(BINDIR)/$(TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $@
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp $(HEADERS)
-	$(CC) $(CFLAGS) -I$(ROOTINC) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJDIR)/*.o
