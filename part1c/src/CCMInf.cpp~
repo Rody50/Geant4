@@ -7,6 +7,8 @@ using std::ofstream;
 using std::to_string;
 using std::flush;
 
+//#define FSUM
+
 CCMInf::CCMInf(P_group_t *p, InfiniteMatterSP *infSP) : fN(p->npp),
 	fA(p->nhh), fNu(p->npp), fP(p),
 	fHamil(p->npp, p->nhh, fill::zeros),
@@ -22,13 +24,14 @@ CCMInf::CCMInf(P_group_t *p, InfiniteMatterSP *infSP) : fN(p->npp),
 	FillMatrix::FillV(fVpppp, fVpphh, fVhhhh,
 		p, fInfSP);
 	//fVhhhh.print();
-	cout << "fVpphh: " << endl;
-	cout << "rows: " << fVpphh.n_rows << "\tcolumns: " << fVpphh.n_cols << endl;
-	fVpphh.print();
+	//cout << "fVpphh: " << endl;
+	//cout << "rows: " << fVpphh.n_rows << "\tcolumns: " << fVpphh.n_cols << endl;
+	//fVpphh.print();
 //	getchar();
 	FillMatrix::FillT(fTpphh, p, this);
-	cout << "fTpphh: " << endl;
-	fTpphh.print();
+	//cout << "fTpphh: " << endl;
+//	cout << "fTpphh.print(): " << endl;
+//	fTpphh.print();
 	//cout << endl << endl;
 //	getchar();
 }
@@ -70,12 +73,15 @@ double CCMInf::FSum(pair_t *tpp, pair_t *shh)
 	double fi = r2(ni) * u + vi;
 	double fj = r2(nj) * u + vj;
 	
-	if(fabs(fabs(-fa - fb + fi + fj) - 480.) < 50){
+
+#ifdef FSUM
+	//if(fabs(fabs(-fa - fb + fi + fj) - 480.) < 50){
 		cout << "fa: " << fa << "\tfb: " << fb << "\tfi: " << fi << "\tfj: " << fj << endl;
 		cout << "va: " << va << "\tvb: " << vb << "\tvi: " << vi << "\tvj: " << vj << endl;
 		cout << "-fa - fb + fi + fj: " << -fa - fb + fi + fj << endl;
 		getchar();
-	}
+	//}
+#endif
 
 	return -fa - fb + fi + fj;
 }
@@ -133,12 +139,12 @@ double CCMInf::SolveT()
 	int NStepsMax = 1E5;
 	int NSteps = 0;
 
-	ofstream corr_en_file(("results/corr_en-steps" + to_string(fN) 
-		+ "_" + to_string(fA) + ".txt").c_str());
+//	ofstream corr_en_file(("results/corr_en-steps" + to_string(fN) 
+//		+ "_" + to_string(fA) + ".txt").c_str());
 
 	vector<qState> &s = fInfSP->GetfStates();
 
-	while (fabs(corr_en - corr_en_pre) > 1E-5 || NSteps > NStepsMax)
+	while (fabs(corr_en - corr_en_pre) > 1E-3 || NSteps > NStepsMax)
 	{	
 		ComputeH();
 		
@@ -184,18 +190,17 @@ double CCMInf::SolveT()
 	//			getchar();
 		}
 
-		//cout << "\tcorr_en: " << corr_en;
-		//cout << " \tNSteps: " << NSteps;
-		//cout << "\r" << flush;
-		//getchar();
+		cout << "\tcorr_en: " << corr_en;
+		cout << " \tNSteps: " << NSteps;
+//		cout << endl;
+		cout << "\r" << flush;
+//		getchar();
 
 		correlationEn.push_back(corr_en);
 		NSteps++;
-		corr_en_file << corr_en << endl;
+//		corr_en_file << corr_en << endl;
 	}
-	corr_en_file.close();
-
-	cout << "The converged correlation energy is: " << corr_en << endl;
+//	corr_en_file.close();
 	
 	return corr_en;
 }

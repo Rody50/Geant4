@@ -39,14 +39,14 @@ int main()
 //	cout << "The Hamiltonian: " << endl;
 //	coupled.SolveT();
 	
-	int nshell = 1, NMax = 2;
+	int nshell = 3, NMax = 2;
 	double rho = 0.08; // nucleon density      unit: fm^-3
 	InfiniteMatterSP spMatter(NMax, nshell, rho);
 	spMatter.GenerateSP();
-	spMatter.Print();
+//	spMatter.Print();
 	spMatter.ConstructPairs();
-	cout << "The total correlation energy is: " 
-		 << spMatter.CorrelationEnergy() << endl;
-
+	double corr_en = spMatter.CorrelationEnergy();
+	cout << "The total correlation energy is: " << corr_en << endl;
 	
+	return 0;
 }

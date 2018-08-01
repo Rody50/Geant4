@@ -131,7 +131,7 @@ struct P_group_t
 		cout << "(Px,Py,Pz): " << "(" << P[0] << ",";
 		cout << P[1] << "," << P[2] << ")" << endl;
 		cout << endl;
-		return;
+//		return;
 		cout << "npp: " << npp;
 		cout << "\t nph: " << nph << "\tnhh: " << nhh << endl;
 		for(int i = 0; i < np; i++){
