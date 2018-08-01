@@ -39,7 +39,7 @@ int main()
 //	cout << "The Hamiltonian: " << endl;
 //	coupled.SolveT();
 	
-	int nshell = 1, NMax = 2;
+	int nshell = 1, NMax = 1;
 	double rho = 0.08; // nucleon density      unit: fm^-3
 	InfiniteMatterSP spMatter(NMax, nshell, rho);
 	spMatter.GenerateSP();

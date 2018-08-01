@@ -22,7 +22,9 @@ CCMInf::CCMInf(P_group_t *p, InfiniteMatterSP *infSP) : fN(p->npp),
 	FillMatrix::FillV(fVpppp, fVpphh, fVhhhh,
 		p, fInfSP);
 	//fVhhhh.print();
-	//fVpphh.print();
+	cout << "fVpphh: " << endl;
+	cout << "rows: " << fVpphh.n_rows << "\tcolumns: " << fVpphh.n_cols << endl;
+	fVpphh.print();
 //	getchar();
 	FillMatrix::FillT(fTpphh, p, this);
 	cout << "fTpphh: " << endl;
@@ -69,10 +71,10 @@ double CCMInf::FSum(pair_t *tpp, pair_t *shh)
 	double fj = r2(nj) * u + vj;
 	
 	//if(fabs(fabs(-fa - fb + fi + fj) - 480.) < 50){
-	//	cout << "fa: " << fa << "\tfb: " << fb << "\tfi: " << fi << "\tfj: " << fj << endl;
-	//	cout << "va: " << va << "\tvb: " << vb << "\tvi: " << vi << "\tvj: " << vj << endl;
-	//	cout << "-fa - fb + fi + fj: " << -fa - fb + fi + fj << endl;
-	//	getchar();
+		cout << "fa: " << fa << "\tfb: " << fb << "\tfi: " << fi << "\tfj: " << fj << endl;
+		cout << "va: " << va << "\tvb: " << vb << "\tvi: " << vi << "\tvj: " << vj << endl;
+		cout << "-fa - fb + fi + fj: " << -fa - fb + fi + fj << endl;
+		getchar();
 	//}
 
 	return -fa - fb + fi + fj;
