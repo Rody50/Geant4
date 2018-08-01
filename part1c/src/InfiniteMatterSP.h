@@ -128,6 +128,7 @@ struct P_group_t
 	void print(const vector<qState> &s) const{
 		cout << "(Px,Py,Pz): " << "(" << P[0] << ",";
 		cout << P[1] << "," << P[2] << ")" << endl;
+		return;
 		cout << "npp: " << npp;
 		cout << "\t nph: " << nph << "\tnhh: " << nhh << endl;
 		for(int i = 0; i < np; i++){

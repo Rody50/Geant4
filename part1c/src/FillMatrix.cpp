@@ -36,12 +36,15 @@ void FillMatrix::FillV(mat & vpppp, mat & vpphh,
 	vector<qState> &s = InfSP_p->GetfStates();
 	int size = p->np;
 	int hhhhA = 0, pphhA = 0, ppppA = 0;
+	std::cout << "error? #0" << std::endl;
 
 	for (int a = 0; a < size; a++) // loop over row
 	{
 		int hhhhI = 0, pphhI = 0, ppppI = 0;
 		for (int i = 0; i < size; i++) //  loop over column
 		{
+				std::cout << "error? #1" << std::endl;
+
 			qState * sa = & s[p->pr[a].i];
 			qState * sb = & s[p->pr[a].j];
 			qState * si = & s[p->pr[i].i];
@@ -55,16 +58,24 @@ void FillMatrix::FillV(mat & vpppp, mat & vpphh,
 			if (isHoleA && isHoleB && isHoleI && isHoleJ)
 			{
 				vhhhh(hhhhA + hhhhI * size) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i]);
+					std::cout << "error? #2" << std::endl;
+
 				hhhhI++;
 			}
-			if (!isHoleA && !isHoleB && isHoleI && isHoleJ)
+			if ((!isHoleA && !isHoleB && isHoleI && isHoleJ) || 
+				(isHoleA && isHoleB && !isHoleI && !isHoleJ))
 			{	
+				getchar();
 				vpphh(pphhA + pphhI * size) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i]);
+					std::cout << "error? #3" << std::endl;
+
 				pphhI++;
 			}
 			if (!isHoleA && !isHoleB && !isHoleI && !isHoleJ)
 			{
 				vpppp(ppppA + ppppI * size) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i]);
+					std::cout << "error? #4" << std::endl;
+
 				ppppI++;
 			}
 		}

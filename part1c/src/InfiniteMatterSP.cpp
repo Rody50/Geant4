@@ -82,7 +82,8 @@ P_group_t *InfiniteMatterSP::P(int nX, int nY, int nZ)
 //	cout << "PM: " << PM << endl; // DEBUG
 //	if(nX == -4) getchar(); // DEBUG
 	const int index = (n[0]*nP + n[1])*nP + n[2];
-	if(index >= nP*nP*nP) cout << "BANG!" << endl;
+	if(index >= nP*nP*nP){ cout << "BANG!1" << endl;
+		cout << "n0: " << n[0] << "\tn1: " << n[1] << "\tn2: " << n[2] << endl;}
 	return &fP[index];
 }
 
@@ -91,7 +92,8 @@ void InfiniteMatterSP::ConstructPairs()
 	vector<qState> &s = fStates;
 	cout << fNSP << endl;
 	for(int i = 0; i < fNSP; i++){
-		for(int j = i + 1; j < fNSP; j++){
+		for(int j = 0; j < fNSP; j++){
+			if(i == j) continue;
 			qState *a = &s[i], *b = &s[j];
 			const int n[3] = {a->nx+b->nx, a->ny+b->ny, a->nz+b->nz};
 			P_group_t *p = P(n[0], n[1], n[2]);
@@ -103,13 +105,14 @@ void InfiniteMatterSP::ConstructPairs()
 			if(!a->isHole && b->isHole) p->nph++;
 			if(a->isHole && !b->isHole) p->nph++;
 			if(!a->isHole && !b->isHole) p->npp++;
-			if(p->np+1 > 10000) cout << "BANG!" << endl;
+			if(p->np+1 > 10000) cout << "BANG!2" << endl;
 			p->pr[p->np++] = pr;
 //			a->print(); b->print();
 //			p->print(s); getchar(); // DEBUG
 		} // end for over j
 	} // end for over i
-	const int n = pow(4*fNmax + 1, 3); // DEBUG
+	const int n = 4*fNmax + 1; // DEBUG
+	int nn = 0;
 	for(int i = 0; i < n; i++){ // DEBUG
 		for(int j = 0; j < n; j++){
 			for(int k = 0; k < n; k++){
@@ -117,6 +120,7 @@ void InfiniteMatterSP::ConstructPairs()
 				cout << "\tj: " << j; // DEBUG
 				cout << "\tk: " << k << endl; // DEBUG
 				P(i - 2*fNmax, j - 2*fNmax, k - 2*fNmax)->print(fStates);
+				cout << nn++ << endl;
 				getchar();
 			} // end for over k
 		} // end for over j
@@ -129,7 +133,7 @@ double P_group_t::CorrelationEnergy(InfiniteMatterSP *InfSP){
 
 double InfiniteMatterSP::CorrelationEnergy()
 {
-	const int n = pow(4*fNmax + 1, 3);
+	const int n = 4*fNmax + 1;
 	double corr_en = 0.;
 	
 	for(int i = 0; i < n; i++){
@@ -138,6 +142,8 @@ double InfiniteMatterSP::CorrelationEnergy()
 				cout << "i: " << i;
 				cout << "\tj: " << j;
 				cout << "\tk: " << k << endl;
+				cout << "\tTotal momentum group: ";
+				P(i - 2*fNmax, j - 2*fNmax, k - 2*fNmax)->print(fStates);
 				corr_en += P(i - 2*fNmax, j - 2*fNmax, k - 2*fNmax)->CorrelationEnergy(this);
 				cout << "corr_en: " << corr_en << endl;
 				getchar();

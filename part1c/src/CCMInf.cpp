@@ -1,25 +1,29 @@
 #include "CCMInf.h"
 #include <fstream>
+#include <iostream>
 #include <string>
 
 using std::ofstream;
 using std::to_string;
 using std::flush;
 
-CCMInf::CCMInf(P_group_t *p, InfiniteMatterSP *infSP) : fN(p->N()),
-	fA(p->A()), fNu(p->N() - p->A()), fP(p),
-	fHamil(p->N() - p->A(), p->A()),
-	fVpppp(p->N() - p->A(), p->N() - p->A()),	
-	fVpphh(p->N() - p->A(), p->A()), 
-	fVhhpp(p->A(), p->N() - p->A()), 
-	fVhhhh(p->A(), p->A()),
-	fTpphh(p->N() - p->A(), p->A()),
-	fInterm(p->N() - p->A(), p->A()),
+CCMInf::CCMInf(P_group_t *p, InfiniteMatterSP *infSP) : fN(p->npp),
+	fA(p->nhh), fNu(p->npp), fP(p),
+	fHamil(p->npp, p->nhh, fill::zeros),
+	fVpppp(p->npp, p->npp, fill::zeros),	
+	fVpphh(p->npp, p->nhh, fill::zeros), 
+	fVhhpp(p->nhh, p->npp, fill::zeros), 
+	fVhhhh(p->nhh, p->nhh, fill::zeros),
+	fTpphh(p->npp, p->nhh, fill::zeros),
+	fInterm(p->npp, p->nhh, fill::zeros),
 	fInfSP(infSP)
 {
+	std::cout << "Does the error happen here? #-2" << std::endl;
 	FillMatrix::FillV(fVpppp, fVpphh, fVhhhh,
 		p, fInfSP);
+	std::cout << "Does the error happen here? #-1" << std::endl;
 	FillMatrix::FillT(fTpphh, p, this);
+	std::cout << "Does the error happen here? #0" << std::endl;
 	//fVpppp.print();
 }
 
@@ -29,6 +33,8 @@ inline int r2(int *p){
 
 double CCMInf::FSum(pair_t *tpp, pair_t *shh)
 {
+	std::cout << "Does the error happen here? #1" << std::endl;
+
 	vector<qState> &states = fInfSP->GetfStates();
 	qState *a = &states[tpp->i];
 	qState *b = &states[tpp->j];
@@ -58,6 +64,8 @@ void CCMInf::Interm()
 	vector<qState> &s = fInfSP->GetfStates();
 	int size = fP->np;
 	int pphhA = 0;
+
+	std::cout << "Does the error happen here? #2" << std::endl;
 
 	for (int a = 0; a < size; a++) // loop over row
 	{
@@ -89,6 +97,7 @@ void CCMInf::Interm()
 void CCMInf::ComputeH()
 {
 	Interm();
+	std::cout << "Does the error happen here? #3" << std::endl;
 
 	fHamil = fVpphh + fInterm + fVpppp * fTpphh + fTpphh * fVhhhh;
 }
