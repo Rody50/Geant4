@@ -155,7 +155,7 @@ void FillMatrix::FillT(mat & tpphh,
 			if (!isHoleA && !isHoleB && isHoleI && isHoleJ)
 			{	
 				tpphh(pphhA, pphhI) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i])
-					/ CCMInf_p->FSum(&p->pr[a], &p->pr[i]);
+					/ (-CCMInf_p->FSum(&p->pr[a], &p->pr[i]));
 				pphhI++;
 			}
 

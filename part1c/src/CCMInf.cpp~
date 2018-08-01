@@ -83,7 +83,7 @@ double CCMInf::FSum(pair_t *tpp, pair_t *shh)
 	//}
 #endif
 
-	return -fa - fb + fi + fj;
+	return fa + fb - fi - fj;
 }
 
 void CCMInf::Interm()
@@ -112,7 +112,7 @@ void CCMInf::Interm()
 			if (!isHoleA && !isHoleB && isHoleI && isHoleJ)
 			{	
 				fInterm(pphhA, pphhI) = fTpphh(pphhA, pphhI)
-					* this->FSum(&(fP->pr[a]), &(fP->pr[i]));
+					* FSum(&(fP->pr[a]), &(fP->pr[i]));
 				pphhI++;
 			}
 
@@ -125,7 +125,7 @@ void CCMInf::ComputeH()
 {
 	Interm();
 
-	fHamil = fVpphh - fInterm + 0.5 * (fVpppp * fTpphh + fTpphh * fVhhhh);
+	fHamil = fVpphh + fInterm + 0.5 * (fVpppp * fTpphh + fTpphh * fVhhhh);
 }
 
 double CCMInf::SolveT()
@@ -179,7 +179,7 @@ double CCMInf::SolveT()
 
 					fTpphh(pphhA, pphhI) += factor
 						* fHamil(pphhA, pphhI)
-						/ this->FSum(&(fP->pr[a]), &(fP->pr[i]));
+						/ (-FSum(&(fP->pr[a]), &(fP->pr[i])));
 					pphhI++;
 				}
 
