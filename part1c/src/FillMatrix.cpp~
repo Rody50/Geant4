@@ -36,15 +36,12 @@ void FillMatrix::FillV(mat & vpppp, mat & vpphh,
 	vector<qState> &s = InfSP_p->GetfStates();
 	int size = p->np;
 	int hhhhA = 0, pphhA = 0, ppppA = 0;
-//	std::cout << "error? #0" << std::endl;
 
 	for (int a = 0; a < size; a++) // loop over row
 	{
 		int hhhhI = 0, pphhI = 0, ppppI = 0;
 		for (int i = 0; i < size; i++) //  loop over column
 		{
-//				std::cout << "error? #1" << std::endl;
-
 			qState * sa = & s[p->pr[a].i];
 			qState * sb = & s[p->pr[a].j];
 			qState * si = & s[p->pr[i].i];
@@ -57,31 +54,17 @@ void FillMatrix::FillV(mat & vpppp, mat & vpphh,
 
 			if (isHoleA && isHoleB && isHoleI && isHoleJ)
 			{
-//				std::cout << "vhhhh.n_rows: " << vhhhh.n_rows << "\tvhhhh.n_cols: " << vhhhh.n_cols << endl;
-//				cout << "hhhhA + hhhhI * size: " << hhhhA + hhhhI * size << endl;
 				vhhhh(hhhhA, hhhhI) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i]);
-//					std::cout << "error? #2" << std::endl;
-
 				hhhhI++;
 			}
 			if ((!isHoleA && !isHoleB && isHoleI && isHoleJ))
 			{
-//				std::cout << "vpphh.n_rows: " << vpphh.n_rows << "\tvpphh.n_cols: " << vpphh.n_cols << endl;
-//				cout << "pphhA + pphhI * size: " << pphhA + pphhI * size << endl;
 				vpphh(pphhA, pphhI) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i]);
-//					std::cout << "error? #3" << std::endl;
-
 				pphhI++;
-//				getchar();
 			}
 			if (!isHoleA && !isHoleB && !isHoleI && !isHoleJ)
 			{
-//				std::cout << "vpppp.n_rows: " << vpppp.n_rows << "\tvpppp.n_cols: " << vpppp.n_cols << endl;
-//				cout << "ppppA + ppppI * size: " << ppppA + ppppI * size << endl;
-//				cout << "ppppA: " << ppppA << "\tppppI: " << ppppI << endl;
 				vpppp(ppppA, ppppI) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i]);
-//					std::cout << "error? #4" << std::endl;
-
 				ppppI++;
 			}
 		}
@@ -139,23 +122,23 @@ void FillMatrix::FillT(mat & tpphh,
 
 	for (int a = 0; a < size; a++) // loop over row
 	{
+		if(isHoleA || isHoleB) continue;
+		qState * sa = & s[p->pr[a].i];
+		qState * sb = & s[p->pr[a].j];
+		bool isHoleA = sa->isHole;
+		bool isHoleB = sb->isHole;
 		int pphhI = 0;
 		for (int i = 0; i < size; i++) //  loop over column
 		{
-			qState * sa = & s[p->pr[a].i];
-			qState * sb = & s[p->pr[a].j];
 			qState * si = & s[p->pr[i].i];
 			qState * sj = & s[p->pr[i].j];
-
-			bool isHoleA = sa->isHole;
-			bool isHoleB = sb->isHole;
 			bool isHoleI = si->isHole;
 			bool isHoleJ = sj->isHole;
 
-			if (!isHoleA && !isHoleB && isHoleI && isHoleJ)
+			if (isHoleI && isHoleJ)
 			{	
-				tpphh(pphhA, pphhI) = -InfSP_p->Minnesota(&p->pr[a], &p->pr[i])
-					/ CCMInf_p->FSum(&p->pr[a], &p->pr[i]);
+				tpphh(pphhA, pphhI) = InfSP_p->Minnesota(&p->pr[a], &p->pr[i])
+					/ (-CCMInf_p->FSum(&p->pr[a], &p->pr[i]));
 				pphhI++;
 			}
 
@@ -163,11 +146,6 @@ void FillMatrix::FillT(mat & tpphh,
 		if (pphhI) pphhA++; 	
 	}	
 }
-// void FillMatrix::Print()
-// {
-// 	fConfigObj.Print();
-// 	v->print();
-// }
 
 bool FillMatrix::IsPair(int a, int b)
 {

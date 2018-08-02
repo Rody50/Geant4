@@ -1,18 +1,20 @@
 #include "InfiniteMatterSP.h"
 #include "CCMInf.h"
 
-#define REP // P-BLOCK shell counting to speed up running
+using std::flush;
 
 InfiniteMatterSP::InfiniteMatterSP(int Nmax, int nShell, double rho) : 
 		fNmax(Nmax), fNShell(nShell), fA(0), fNSP(0), fRho(rho), fL(0),
 		fEnUn(0)
 {
+	cout << "\033[1mInfiniteMatter constructor, rho: " << rho << "\033[0m" << endl;
 	if(nShell > 20){
 		cout << "nShell too large (has to be < 20): " << nShell << endl;
 		exit(1);
 	}
 	const int nP = 4*Nmax + 1;
 	fP = new P_group_t[nP*nP*nP]; // -2fNmax ~ 2fNmax
+	fP->co_enVec.clear();
 }
 
 InfiniteMatterSP::~InfiniteMatterSP()
@@ -30,12 +32,13 @@ inline double r(int x, int y, int z)
 	return sqrt(r2(x,y,z));
 }
 
+
 inline int delta(int i, int j)
 {
 	return i == j;
 }
 
-static const double RSHELL[20] = {
+const double RSHELL[20] = {
 	r(0,0,0),r(1,0,0),r(1,1,0),r(1,1,1),r(2,0,0),
 	r(2,1,0),r(2,1,1),r(2,2,0),r(2,2,1),r(3,1,0),
 	r(3,1,1),r(2,2,2),r(3,2,0),r(3,2,1),r(4,0,0),
@@ -71,8 +74,6 @@ void InfiniteMatterSP::GenerateSP()
 
 	fL = pow(fA / fRho, 1 / 3.);
 	fEnUn = 2 * PI * PI * hbarc * hbarc / (nmass * fL * fL); 
-//	cout << "fL: " << fL << endl; getchar();
-
 }
 
 P_group_t *InfiniteMatterSP::P(int nX, int nY, int nZ)
@@ -80,10 +81,6 @@ P_group_t *InfiniteMatterSP::P(int nX, int nY, int nZ)
 	const int PM = 2*fNmax; // maximum P
 	const int nP = 4*fNmax + 1; // maximum P
 	const int n[3] = {nX+PM, nY+PM, nZ+PM};
-	//cout << "n[0]: " << nX << "\tn[1]: " << nY; // DEBUG
-	//cout << "\tn[2]: " << nZ << endl; // DEBUG
-	//cout << "PM: " << PM << endl; // DEBUG
-	//if(nX == -4) getchar(); // DEBUG
 	const int index = (n[0]*nP + n[1])*nP + n[2];
 	if(index >= nP*nP*nP){
 		cout << "BANG!1" << endl;
@@ -136,19 +133,6 @@ void InfiniteMatterSP::ConstructPairs()
 	} // DEBUG
 } // end of member function ConstructPair
 
-struct corr_en_t{
-	int P[3];
-	double corr_en;
-	corr_en_t(){
-		P[0] = -1; P[1] = -1; P[2] = -1;
-		corr_en = -99.;
-	}
-	corr_en_t(int *p, double cor){
-		P[0] = p[0]; P[1] = p[1]; P[2] = p[2];
-		corr_en = cor;
-	}
-};
-
 inline bool isSimilarP(const int *a, const int *b){
 	int p1[3] = {abs(a[0]), abs(a[1]), abs(a[2])};
 	int p2[3] = {abs(b[0]), abs(b[1]), abs(b[2])};
@@ -162,10 +146,12 @@ inline bool isSimilarP(const int *a, const int *b){
 	return false;
 }
 
+
+vector<corr_en_t> P_group_t::co_enVec;
+
 double P_group_t::CorrelationEnergy(InfiniteMatterSP *InfSP){
 //	return CCMInf(this, InfSP).SolveT();
 
-	static vector<corr_en_t> co_enVec;
 	for(const auto &t : co_enVec){
 		if(isSimilarP(P, t.P)) return t.corr_en;
 	}
@@ -192,7 +178,7 @@ double InfiniteMatterSP::CorrelationEnergy()
 
 				cout << "(nx, ny, nz): ";
 				cout << "(" << nx << "," << ny << "," << nz << ")   ";
-				cout << "corr_en: " << tmp << endl;
+				cout << "corr_en: " << tmp << "\r" << flush;
 			} // end for over k
 		} // end for over j
 	} // end for over i
@@ -228,20 +214,6 @@ const qState &si, const qState &sj)
 	if(spin[0][0]*spin[0][1] > 0) return 0.; // spin triplet
 	if(spin[1][0]*spin[1][1] > 0) return 0.; // spin triplet
 
-	// anti-symmetrization
-	short sign = 1;
-	if(spin[0][0] == +1 && spin[0][1] == -1 && 
-		 spin[1][0] == +1 && spin[1][1] == -1) sign = +1.; // <+-|V|+->
-
-	if(spin[0][0] == +1 && spin[0][1] == -1 && 
-		 spin[1][0] == -1 && spin[1][1] == +1) sign = -1.; // <+-|V|-+>
-
-	if(spin[0][0] == -1 && spin[0][1] == +1 && 
-		 spin[1][0] == +1 && spin[1][1] == -1) sign = -1.; // <-+|V|+->
-
-	if(spin[0][0] == -1 && spin[0][1] == +1 && 
-		 spin[1][0] == -1 && spin[1][1] == +1) sign = +1.; // <-+|V|-+>
-
 	int qij[3], qji[3];
 
 	qij[0] = ti.nx-tj.nx-si.nx+sj.nx;
@@ -255,7 +227,7 @@ const qState &si, const qState &sj)
 	int q2ij = r2(qij[0], qij[1], qij[2]);
 	int q2ji = r2(qji[0], qji[1], qji[2]);
 
-	static double fact = PI / fL * PI / fL;
+	double fact = PI / fL * PI / fL;
 	const double v = 0.5 *
 		( // ij term
 		(VR / pow(fL, 3.) * pow(PI / KAPPAR, 3. / 2)
@@ -274,11 +246,10 @@ const qState &si, const qState &sj)
 		*(delta(spin[0][0], spin[1][0]) * delta(spin[0][1], spin[1][1]) 
 		- delta(spin[0][0], spin[1][1]) * delta(spin[0][1], spin[1][0]));
 
-		return v; // * sign;
+		return v;
 }
 double InfiniteMatterSP::Minnesota(const pair_t * t, const pair_t * s)
 {
-//	t->print(fStates); s->print(fStates);
 	return Minnesota(fStates[t->i], fStates[t->j], fStates[s->i], fStates[s->j]);
 }
 

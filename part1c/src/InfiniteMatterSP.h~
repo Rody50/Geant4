@@ -22,8 +22,6 @@ const double VR = 200., VS = -91.85, VT = -178.;
 const double hbarc = 197.326; // MeV * fm
 const double nmass = 938.92; //939.565; // MeV / c^2
 
-class CCMInf;
-
 struct qState
 {
 	short nx, ny, nz, nshell;
@@ -104,11 +102,27 @@ class InfiniteMatterSP{
 		double fEnUn;
 };
 
+struct corr_en_t{
+	int P[3];
+	double corr_en;
+
+	corr_en_t(){
+		P[0] = -1; P[1] = -1; P[2] = -1;
+		corr_en = -99.;
+	}
+	corr_en_t(int *p, double cor){
+		P[0] = p[0]; P[1] = p[1]; P[2] = p[2];
+		corr_en = cor;
+	}
+};
+
+
 struct P_group_t
 {
 	array<pair_t, 10000> pr; // pairs
 	int npp, nph, nhh, np; // np: n of pairs
 	int P[3];
+	static vector<corr_en_t> co_enVec;
 
 	P_group_t()
 	{
@@ -131,7 +145,7 @@ struct P_group_t
 		cout << "(Px,Py,Pz): " << "(" << P[0] << ",";
 		cout << P[1] << "," << P[2] << ")" << endl;
 		cout << endl;
-		return;
+//		return;
 		cout << "npp: " << npp;
 		cout << "\t nph: " << nph << "\tnhh: " << nhh << endl;
 		for(int i = 0; i < np; i++){
@@ -145,4 +159,17 @@ struct P_group_t
 	double CorrelationEnergy(InfiniteMatterSP *infSP); // for CCD calculation
 };
 
+
+
 #endif // INFINITEMATTERSP_H
+
+
+
+
+
+
+
+
+
+
+

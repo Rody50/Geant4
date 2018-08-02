@@ -7,7 +7,6 @@ using std::ofstream;
 using std::to_string;
 using std::flush;
 
-//#define FSUM
 
 CCMInf::CCMInf(P_group_t *p, InfiniteMatterSP *infSP) : fN(p->npp),
 	fA(p->nhh), fNu(p->npp), fP(p),
@@ -20,20 +19,9 @@ CCMInf::CCMInf(P_group_t *p, InfiniteMatterSP *infSP) : fN(p->npp),
 	fInterm(p->npp, p->nhh, fill::zeros),
 	fInfSP(infSP)
 {
-//	fHamil.print(); getchar();
 	FillMatrix::FillV(fVpppp, fVpphh, fVhhhh,
 		p, fInfSP);
-	//fVhhhh.print();
-	//cout << "fVpphh: " << endl;
-	//cout << "rows: " << fVpphh.n_rows << "\tcolumns: " << fVpphh.n_cols << endl;
-	//fVpphh.print();
-//	getchar();
 	FillMatrix::FillT(fTpphh, p, this);
-	//cout << "fTpphh: " << endl;
-//	cout << "fTpphh.print(): " << endl;
-//	fTpphh.print();
-	//cout << endl << endl;
-//	getchar();
 }
 
 inline int r2(int *p){
@@ -60,7 +48,6 @@ double CCMInf::FSum(pair_t *tpp, pair_t *shh)
 
 	for(auto &t : states){
 		if(t.isHole){
-//			t.print(); getchar();
 			va += fInfSP->Minnesota(*a, t, *a, t);
 			vb += fInfSP->Minnesota(*b, t, *b, t);
 			vi += fInfSP->Minnesota(*i, t, *i, t);
@@ -96,20 +83,20 @@ void CCMInf::Interm()
 	{
 		qState * sa = & s[fP->pr[a].i];
 		qState * sb = & s[fP->pr[a].j];
+		
 		bool isHoleA = sa->isHole;
 		bool isHoleB = sb->isHole;
-		if(isHoleA && isHoleB) continue;
+		if(isHoleA || isHoleB) continue;
 		int pphhI = 0;
 		for (int i = 0; i < size; i++) //  loop over column
 		{
 
 			qState * si = & s[fP->pr[i].i];
 			qState * sj = & s[fP->pr[i].j];
-
 			bool isHoleI = si->isHole;
 			bool isHoleJ = sj->isHole;
 
-			if (!isHoleA && !isHoleB && isHoleI && isHoleJ)
+			if (isHoleI && isHoleJ)
 			{	
 				fInterm(pphhA, pphhI) = fTpphh(pphhA, pphhI)
 					* FSum(&(fP->pr[a]), &(fP->pr[i]));
@@ -160,7 +147,7 @@ double CCMInf::SolveT()
 			qState * sb = & s[fP->pr[a].j];
 			bool isHoleA = sa->isHole;
 			bool isHoleB = sb->isHole;
-			if(isHoleA && isHoleB) continue;
+			if(isHoleA || isHoleB) continue;
 			int pphhI = 0;
 			for (int i = 0; i < size; i++) //  loop over column
 			{
@@ -172,7 +159,7 @@ double CCMInf::SolveT()
 				bool isHoleI = si->isHole;
 				bool isHoleJ = sj->isHole;
 
-				if (!isHoleA && !isHoleB && isHoleI && isHoleJ)
+				if (isHoleI && isHoleJ)
 				{
 					corr_en += 0.25 * fVpphh(pphhA, pphhI)
 						* fTpphh(pphhA, pphhI);
@@ -183,18 +170,13 @@ double CCMInf::SolveT()
 					pphhI++;
 				}
 
-//				cout << "0.pphhI: " << pphhI << "pphhA: " << pphhA << endl; 
 			}
 			if (pphhI) pphhA++;
-//				cout << "1.pphhI: " << pphhI << "pphhA: " << pphhA << endl; 
-	//			getchar();
 		}
 
 		cout << "\tcorr_en: " << corr_en;
 		cout << " \tNSteps: " << NSteps;
-//		cout << endl;
 		cout << "\r" << flush;
-//		getchar();
 
 		correlationEn.push_back(corr_en);
 		NSteps++;
