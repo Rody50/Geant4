@@ -14,7 +14,7 @@ using namespace Eigen;
 
 #define pi 3.1415926
 
-const int magic_no = 38;
+const int magic_no = 14;
 const int Nmax = 2;
 const double density = 0.08;
 const double mass = 938.92; // in unit of MeV
@@ -168,10 +168,11 @@ double f_ks(struct spstate *config, int spstates_no, double L, int kp_x, int kp_
 		{
 			if(config[i].occupied == 1)
 			{
-				if(config[i].kx == kp_x && config[i].ky == kp_y && config[i].kz == kp_z) continue;
+				if(config[i].kx == kp_x && config[i].ky == kp_y && config[i].kz == kp_z && config[i].sz == sp) continue;
 				ip_kx = (double)(config[i].kx - kp_x)/2.;
 				ip_ky = (double)(config[i].ky - kp_y)/2.;
-				ip_kz = (double)(config[i].kz - kp_z)/2.;				
+				ip_kz = (double)(config[i].kz - kp_z)/2.;
+
 				result += V_ks_AS(L, ip_kx, ip_ky, ip_kz, config[i].sz, sp,ip_kx, ip_ky, ip_kz, config[i].sz, sp);
 			}
 		}
@@ -329,10 +330,13 @@ void generate_config() //generate single particle state
 				}
 			}
 		}
-//		cout<<hh_no<<endl;
-//		cout<<loop3<<endl;
-		/// BENCHMARK ////
-		///kinetic energy ///
+	/////////////////////////////////////////////////////////////////////////
+	//*********************************************************************//
+	//***************************** BENCHMARK *****************************//
+	//************** For Kinetic energy and HATREE-FOCK energy ************//
+	//********************************************************************///
+	/////////////////////////////////////////////////////////////////////////
+
 		double Ek = 0.;
 		double kk = 0.;
 	//	cout<<"L = "<<L<<endl;
@@ -406,6 +410,8 @@ void generate_config() //generate single particle state
 		}
 //	}while(loop4<ph_no);*/
 
+
+
 	////////////////////////////////////////////////////////////////////////
 	//********************************************************************//
 	//********************************************************************//
@@ -431,6 +437,7 @@ void generate_config() //generate single particle state
 	int k,loop5;
 	int hh_temp_x, hh_temp_y, hh_temp_z;
 	int hh_dimension = 0;
+
 	double **temp_pointer1_V;
     double *temp_pointer2_V;
 
@@ -457,6 +464,7 @@ void generate_config() //generate single particle state
 			hh_dimension++; // 这记录了hh里有多少个不同的总动量
 		}	
 	}
+
 	for(int i = 0; i<hh_no; i++)
 	{
 		hh_config[i].flag = 1;
@@ -467,9 +475,6 @@ void generate_config() //generate single particle state
 //	cout<< "pp_dimension ="<<pp_dimension<<endl;
 
 //	cout<<"pp_dimension = "<<pp_dimension<<endl;
-
-
-
 
 
 
@@ -499,7 +504,7 @@ void generate_config() //generate single particle state
 			
 	//		hh_channel[hh_temp_dimension].wf = (tbwf *)malloc(sizeof(tbwf) * (p));
 
-			hh_temp_dimension++; 
+			hh_temp_dimension++;
 		}
 	}
 
@@ -515,9 +520,6 @@ void generate_config() //generate single particle state
 	}
 
 //	cout<<"hh no"<<hh_no<<endl;
-
-
-
 
 
 	loop5 = 0;
@@ -553,14 +555,14 @@ void generate_config() //generate single particle state
 	}
 	cout<<loop5<<endl;
 //	cout<<"test count "<<count_1<<endl;
-	for(int i = 0; i<loop5; i++)
-	{
+//	for(int i = 0; i<loop5; i++)
+//	{
 //		cout<<"times "<<pp_channel[i].times<<endl;
-		for (int j = 0; j < hh_channel[i].times; j++)
-		{
+//		for (int j = 0; j < hh_channel[i].times; j++)
+//		{
 //			cout<<"222   "<<pp_channel[i].wf[j].q_kx<<endl;
-		}
-	}
+//		}
+//	}
 
 
 	//// Assignment for the t_Ppk ////
@@ -621,8 +623,11 @@ void generate_config() //generate single particle state
 		}
 	}
 	
-
-	///////////// FULFILL THE V_ij_kl MATRIX ///////////
+	///////////////////////////////////////////////////////////
+	//*******************************************************//
+	//************** FULFILL THE V_ij_kl MATRIX *************//
+	//*******************************************************//
+	//*******************************************************//
 
 	for(int i = 0; i< hh_dimension; i++)
 	{
@@ -646,6 +651,8 @@ void generate_config() //generate single particle state
 //		cout<<"///////////////"<<endl;
 //		cout<<endl;
 	}
+
+
 
 
 	////////////////////////////////////////////////////////////////////////
@@ -726,7 +733,7 @@ void generate_config() //generate single particle state
 	{
 		if(hh_config[i].flag == 1)
 		{
-            Qx = hh_config[i].Q_kx;
+            Qx = hh_config[i].Q_kx; //这里先不记录hhpp_channel_L[hhpp_temp_dimension].Q，因为这里事实上并未确定在pp里一定能找到匹配的hh
 			Qy = hh_config[i].Q_ky;
 			Qz = hh_config[i].Q_kz;
 			times_L = 0;
@@ -764,7 +771,7 @@ void generate_config() //generate single particle state
             }
             else
             {
-            	continue;
+            	continue; //如果times_R =0,即找不到匹配的pp和hh，那么不进行后面的分配，直接进行下一轮循环
             }
 
 		//	cout<<"here = "<<hhpp_channel_L[hhpp_temp_dimension].times<<endl;
@@ -777,7 +784,6 @@ void generate_config() //generate single particle state
 			tbwf *temp_star_hhpp_R;
 			temp_star_hhpp_R = (tbwf *)malloc(hhpp_channel_R[hhpp_temp_dimension].times * sizeof(tbwf));
 			hhpp_channel_R[hhpp_temp_dimension].wf = temp_star_hhpp_R;		
-	//		hh_channel[hh_temp_dimension].wf = (tbwf *)malloc(sizeof(tbwf) * (p));
 	
 			hhpp_temp_dimension++; 
 		}
@@ -820,7 +826,17 @@ void generate_config() //generate single particle state
 //	}
 
 //	cout<<"hh no"<<hh_no<<endl;
-
+	//////////////////////////////////////////
+	//**************************************//
+	///////////重要判定！！！！！////////////////
+	int xx;
+	if(hh_dimension != hhpp_dimension)
+	{
+		cout<<"ERROR!"<<endl;
+		cin>>xx;
+	}
+	//**************************************//
+	//////////////////////////////////////////
 
     for(int i = 0; i<hhpp_dimension; i++) //循环所有hhpp_channel 并且对hhpp_channel[].L_wf R_wf 赋值
     {
@@ -877,9 +893,13 @@ void generate_config() //generate single particle state
     }
 
 
-	//// Assignment for the t_Ppk ////
-	//为每一个pp_channel[pp_temp_dimension]动态分配
 
+	///////////////////////////////////////////////////////////
+	//*******************************************************//
+	//************** APPLY FOR THE V_ij_ab MATRIX ***********//
+	//*******************************************************//
+	///////////////////////////////////////////////////////////
+	//这里先不填 V,t,H，后面填
 
 	MATRIX_CHANNEL V_ijab[hhpp_dimension];
 	MATRIX_CHANNEL t_ijab[hhpp_dimension];
@@ -975,7 +995,7 @@ void generate_config() //generate single particle state
 
 	for(int i = 0; i< hhpp_dimension; i++)
 	{
-		for(int j = 0; j<pp_channel[i].times; j++)
+		for(int j = 0; j < pp_channel[i].times; j++)
 		{
 			
 			pp_channel[i].wf[j].q_kx = hhpp_channel_R[i].wf[j].q_kx;
@@ -1103,6 +1123,8 @@ void generate_config() //generate single particle state
 	//	cout<<endl;
 	}
 
+
+
 	/////////////////////////////////////////////////////////////////////////
 	//*********************************************************************//
 	//******************** FULFILL THE t_ij_ab MATRIX *********************//
@@ -1132,7 +1154,7 @@ void generate_config() //generate single particle state
             kp_x = (int)(((double)hhpp_channel_L[i].Qx - 2 * hhpp_channel_L[i].wf[ij].q_kx) / 2.);
 			kp_y = (int)(((double)hhpp_channel_L[i].Qy - 2 * hhpp_channel_L[i].wf[ij].q_ky) / 2.);
 			kp_z = (int)(((double)hhpp_channel_L[i].Qz - 2 * hhpp_channel_L[i].wf[ij].q_kz) / 2.);
-			sp = hhpp_channel_L[i].wf[ij].sz1;
+			sp = hhpp_channel_L[i].wf[ij].sz2;
             f_jj = f_ks(config, spstates_no, L, kp_x, kp_y, kp_z, sp, kp_x, kp_y, kp_z, sp);
 			
 			for(int ab = 0; ab < hhpp_channel_R[i].times; ab++)
@@ -1146,7 +1168,7 @@ void generate_config() //generate single particle state
                 kp_x = (int)(((double)hhpp_channel_R[i].Qx - 2 * hhpp_channel_R[i].wf[ab].q_kx) / 2.);
 				kp_y = (int)(((double)hhpp_channel_R[i].Qy - 2 * hhpp_channel_R[i].wf[ab].q_ky) / 2.);
 				kp_z = (int)(((double)hhpp_channel_R[i].Qz - 2 * hhpp_channel_R[i].wf[ab].q_kz) / 2.);
-				sp = hhpp_channel_R[i].wf[ab].sz1;
+				sp = hhpp_channel_R[i].wf[ab].sz2;
                 f_bb = f_ks(config, spstates_no, L, kp_x, kp_y, kp_z, sp, kp_x, kp_y, kp_z, sp);
             
 
@@ -1193,11 +1215,17 @@ void generate_config() //generate single particle state
 				kp_z = (int)(((double)hhpp_channel_L[i].Qz + 2 * hhpp_channel_L[i].wf[ij].q_kz) / 2.);
 				sp = hhpp_channel_L[i].wf[ij].sz1;
 				f_ii = f_ks(config, spstates_no, L, kp_x, kp_y, kp_z, sp, kp_x, kp_y, kp_z, sp);
+				//cout<<"i "<<f_ii<<endl;//<<" si = "<<sp<<endl;
+				double byhand;
+				byhand = pow(h_bar,2) * pow((2.*pi/L),2) * (pow(kp_x,2)+pow(kp_y,2)+pow(kp_z,2))/(2*mass);
+				byhand += 7. * (200./pow(L,3) * pow(pi/1.487,1.5) + (-91.85)/pow(L,3) * pow(pi/0.465,1.5));
+
+				//cout<<"by hand = "<<byhand<<endl;
 
 				kp_x = (int)(((double)hhpp_channel_L[i].Qx - 2 * hhpp_channel_L[i].wf[ij].q_kx) / 2.);
 				kp_y = (int)(((double)hhpp_channel_L[i].Qy - 2 * hhpp_channel_L[i].wf[ij].q_ky) / 2.);
 				kp_z = (int)(((double)hhpp_channel_L[i].Qz - 2 * hhpp_channel_L[i].wf[ij].q_kz) / 2.);
-				sp = hhpp_channel_L[i].wf[ij].sz1;
+				sp = hhpp_channel_L[i].wf[ij].sz2;
 				f_jj = f_ks(config, spstates_no, L, kp_x, kp_y, kp_z, sp, kp_x, kp_y, kp_z, sp);
 	
 				for(int ab = 0; ab < hhpp_channel_R[i].times; ab++)
@@ -1229,13 +1257,23 @@ void generate_config() //generate single particle state
                 	kp_x = (int)(((double)hhpp_channel_R[i].Qx - 2 * hhpp_channel_R[i].wf[ab].q_kx) / 2.);
 					kp_y = (int)(((double)hhpp_channel_R[i].Qy - 2 * hhpp_channel_R[i].wf[ab].q_ky) / 2.);
 					kp_z = (int)(((double)hhpp_channel_R[i].Qz - 2 * hhpp_channel_R[i].wf[ab].q_kz) / 2.);
-					sp = hhpp_channel_R[i].wf[ab].sz1;
+					sp = hhpp_channel_R[i].wf[ab].sz2;
 					f_bb = f_ks(config, spstates_no, L, kp_x, kp_y, kp_z, sp, kp_x, kp_y, kp_z, sp);
 
 					h3 =  (f_aa + f_bb) * t_ijab[i].matrix[ij][ab];
 					h4 = -(f_ii + f_jj) * t_ijab[i].matrix[ij][ab];
 
 					H_ijab[i].matrix[ij][ab] = h0 + h1 + h2 + h3 + h4;
+
+					//////////////////////////////
+					//**************************//
+					//**** ITERATIVE t_ijab ****//
+					//**************************//
+					//////////////////////////////
+					///// RENEW t_ijab MATRIX ELEMENTS /////
+					//////**** HERE we should use MIXING !!!****///////
+					//**** t(i) = a * t_no_mixing(i) + (1-a) * t(i-1) ****//
+					//**** ALTERNATIVE CHOICE, WHICH IS IDENTICAL t(i) = t(i-1) + a * H_bar / (f_aa + f_bb + f_ii + f_jj) *****//
 
 					t_last = t_ijab[i].matrix[ij][ab];
 					t_no_this = t_ijab[i].matrix[ij][ab] - H_ijab[i].matrix[ij][ab] / ( f_aa + f_bb - f_ii - f_jj );
@@ -1251,6 +1289,11 @@ void generate_config() //generate single particle state
 		//	cout<<endl;
 		}
 
+		////////////////////////////////
+		//****************************//
+		//**** correlation energy ****//
+		//****************************//
+		////////////////////////////////
 		for(int i = 0; i< hhpp_dimension; i++)
 		{
 			for(int ij = 0; ij < hhpp_channel_L[i].times; ij++)
@@ -1265,26 +1308,9 @@ void generate_config() //generate single particle state
 		
 
 		
-		///// RENEW t_ijab MATRIX ELEMENTS /////
-		//////**** HERE we should use MIXING !!!****///////
-		//**** t(i) = a * t_no_mixing(i) + (1-a) * t(i-1) ****//
-		//**** ALTERNATIVE CHOICE, WHICH IS IDENTICAL t(i) = t(i-1) + a * H_bar / (f_aa + f_bb + f_ii + f_jj) *****//
+
 		
-	/*	for(int i = 0; i< hhpp_dimension; i++)
-		{
-			for(int ij = 0; ij < hhpp_channel_L[i].times; ij++)
-			{
-				for(int ab = 0; ab < hhpp_channel_R[i].times; ab++)
-				{
-					t_last = t_ijab[i].matrix[ij][ab];
-					t_no_this = t_ijab[i].matrix[ij][ab] - H_ijab[i].matrix[ij][ab] / (f_pq(a,a,g) + f_pq(b,b,g) - f_pq(i,i,g) - f_pq(j,j,g));
-					t_ijab[i][j][a-particle_no][b-particle_no] = alpha * t_no_this + (1-alpha) * t_last;
-					
-				}
-			}
-		}*/
-		
-		temp2 = Ec;
+		temp2 = Ec; //record the Ec this time
 		
 		delta = fabs(temp1 - temp2);
 		
@@ -1294,12 +1320,16 @@ void generate_config() //generate single particle state
 
 		if(iter>1000) break; // IF IT CANNOT CONVERGE UNTIL 1000 ITERATIONS, BREAK OUT.
 
-	}while(delta>10e-9);
+	}while(delta>10e-5);
 
 
 
 
-
+	////////////////////////////////
+	//****************************//
+	//**** correlation energy ****//
+	//****************************//
+	////////////////////////////////
 
 	free(config);
 	free(pp_config);
@@ -1352,20 +1382,12 @@ void generate_config() //generate single particle state
 		free(H_ijab[i].matrix);
 	}
 
+
 }
 
 int main()
 {
- Matrix2d a;
-  a << 1, 2,
-       3, 4;
-  MatrixXd b(2,3);
-  b<< 2, 3, 1,
-       1, 4, 1;
- // cout << "a * b = " << a * b<<endl;
-
     generate_config();
-//	cout<<exp(1)<<endl;
-//	double L = pow((double)magic_no/density, 1./3.);
-//	cout<<L<<endl;
+
+
 }
