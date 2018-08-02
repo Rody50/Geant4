@@ -55,18 +55,6 @@ struct CHANNEL
 	tbwf *wf;
 };
 
-/*
-struct CHANNEL_LR
-{
-	int Qx;
-	int Qy;
-	int Qz;
-	int L_times;
-	int R_times;
-	tbwf *L_wf;
-	tbwf *R_wf;
-};
-*/
 struct MATRIX_CHANNEL
 {
 	int Qx;
@@ -74,6 +62,7 @@ struct MATRIX_CHANNEL
 	int Qz;
 	double **matrix; 
 };
+
 
 //********************************************************************//
 //****************************  FUNCTIONS  ***************************//
@@ -130,31 +119,8 @@ double V_ks_AS(double L, double q_rs_x, double q_rs_y, double q_rs_z, int sz_r, 
 	return result;
 }
 
-/*double test(double L, int kr_x, int kr_y, int kr_z, int sr, int ks_x, int ks_y, int ks_z, int ss,\
-					  int kp_x, int kp_y, int kp_z, int sp, int kq_x, int kq_y, int kq_z, int sq)
-{
-	double qq;
-	double result;
-	qq = 0.25 * (pow((kp_x-kq_x-kr_x+ks_x),2) + pow((kp_y-kq_y-kr_y+ks_y),2) + pow((kp_z-kq_z-kr_z+ks_z),2)) *pow((2*pi/L),2);
 
-	result = 200./pow(L,3) * pow((pi/1.487), 1.5) * exp(-qq/(4*1.487));
-
-	result += -91.85/pow(L,3) * pow((pi/0.465), 1.5) * exp(-qq/(4*0.465));
-
-	result *= kronecker(sp,sr) * kronecker(sq,ss) - kronecker(sp,ss) * kronecker(sq,sr);
-	return result*0.5;
-}
-double test_AS(double L, int kr_x, int kr_y, int kr_z, int sr, int ks_x, int ks_y, int ks_z, int ss,\
-					 	 int kp_x, int kp_y, int kp_z, int sp, int kq_x, int kq_y, int kq_z, int sq)
-{
-	double result;
-	result = test(L, kr_x, kr_y, kr_z, sr, ks_x, ks_y, ks_z, ss, kp_x, kp_y, kp_z, sp, kq_x, kq_y, kq_z, sq)
-	-test(L, ks_x, ks_y, ks_z, ss, kr_x, kr_y, kr_z, sr, kp_x, kp_y, kp_z, sp, kq_x, kq_y, kq_z, sq);
-	return result;
-}*/
-
-
-
+///*** DEFINE THE f FUNCTION***///
 double f_ks(struct spstate *config, int spstates_no, double L, int kp_x, int kp_y, int kp_z, int sp, int kq_x, int kq_y, int kq_z, int sq)
 {
 	double result = 0;
@@ -202,14 +168,22 @@ void generate_config() //generate single particle state
 	//********************************************************************//
 	////////////////////////////////////////////////////////////////////////
 
+
+	/////////////////////////////////////////////////////////////////////////////////
+	//*****************************************************************************//
 	//*** Actually it is a MAP more than fullfill the s.p. configuration space. ***//
-/*	for(int i = 0; i<spstates_no; i++)
+	//*****************************************************************************//
+	/////////////////////////////////////////////////////////////////////////////////
+
+	/*	for(int i = 0; i<spstates_no; i++)
 	{
 		config[i].sz = (i%2) - 0.5 ;
 		config[i].kz = (i/2) % (2*(2*Nmax+1)) - Nmax;
 		config[i].ky = ((i/2) / (2*(2*Nmax+1))) % (2*(2*Nmax+1)) - Nmax;
 		config[i].kx = (((i/2) / (2*(2*Nmax+1))) / (2*(2*Nmax+1))) % (2*(2*Nmax+1)) - Nmax;
 	}*/
+
+
 
 	////////////////////////////////////////////////////////////////////////
 	//********************************************************************//
@@ -245,13 +219,6 @@ void generate_config() //generate single particle state
 	}while(loop1<spstates_no);
 
 
-
-	for(int i = 0; i<spstates_no; i++)
-	{
-	//	cout<<"config"<<i<<" = "<<config[i].kx<<" "<<config[i].ky<<" "<<config[i].kz<<" "<<config[i].sz<<" "<<config[i].occupied<<endl;
-	}
-
-
 	/////////////////////////////////////////////////////////////////////////
 	//*********************************************************************//
 	//*** GENERATE THE CONFIGURATIONS IN RELATIVE MOMENTUM PRESENTATION ***//
@@ -261,9 +228,6 @@ void generate_config() //generate single particle state
 	double pp_no = (spstates_no - magic_no) * (spstates_no - magic_no - 1);//combinator((spstates_no - magic_no) , 2); // number of pp-configurations in relative presentation
 	double hh_no = 2 * combinator(magic_no, 2);
 	double ph_no = 2 * (spstates_no - magic_no) * magic_no;
-//	cout<<"pp no = "<<pp_no<<endl;
-//	cout<<"hh no = "<<hh_no<<endl;
-//	cout<<"ph no = "<<ph_no<<endl;
 
 	tbwf *pp_config = (tbwf *)malloc(pp_no * sizeof(tbwf)); //configurations in relative presentation
 	tbwf *hh_config = (tbwf *)malloc(hh_no * sizeof(tbwf));
@@ -274,10 +238,9 @@ void generate_config() //generate single particle state
 	int loop2 = 0;
 	int loop3 = 0;
 	int loop4 = 0;
+
+
 	////////  pp-configuration /////
-//	do
-//	{
-//		cout<<"spstate "<<spstates_no<<endl;
 		for(int k1 = 0; k1<spstates_no; k1++)
 		{
 			for(int k2 = 0; k2<spstates_no; k2++)
@@ -302,11 +265,7 @@ void generate_config() //generate single particle state
 				}
 			}
 		}
-	//}while(loop2<pp_no);
-//	cout<<"pp no = "<<pp_no<<endl;
-	//////  hh-configuration   //////
-//	do
-//	{
+
 		for(int k1 = 0; k1<spstates_no; k1++)
 		{
 			for(int k2 = 0; k2<spstates_no; k2++)
@@ -330,6 +289,11 @@ void generate_config() //generate single particle state
 				}
 			}
 		}
+
+
+
+
+
 	/////////////////////////////////////////////////////////////////////////
 	//*********************************************************************//
 	//***************************** BENCHMARK *****************************//
@@ -362,30 +326,7 @@ void generate_config() //generate single particle state
 		}
 		cout<<"hatree fock energy = "<<hf_energy/14.<<endl;
 
-/////////TEST///////////
-/*		double test_energy=Ek;
-		for(int i = 0; i<spstates_no; i++)
-		{
-			if(config[i].occupied == 1)
-			{
-				for(int j =0; j<spstates_no; j++)
-				{
-					if(config[j].occupied == 1 && i!= j)
-					{
-						test_energy += 0.5 * test_AS(L,config[i].kx, config[i].ky, config[i].kz, config[i].sz, config[j].kx, config[j].ky, config[j].kz, config[j].sz, config[i].kx, config[i].ky, config[i].kz, config[i].sz, config[j].kx, config[j].ky, config[j].kz, config[j].sz);
-					}
-				}
-			}
-		}
-		cout<<"HIIIII!!! test = "<<test_energy/14.<<endl;*/
 
-
-
-//	}while(loop3<hh_no);
-
-	//////  ph-configuration  //////
-//	do
-//	{
 		for(int k1 = 0; k1<spstates_no; k1++)
 		{
 			for(int k2 = 0; k2<spstates_no; k2++)
@@ -408,8 +349,6 @@ void generate_config() //generate single particle state
 				}
 			}
 		}
-//	}while(loop4<ph_no);*/
-
 
 
 	////////////////////////////////////////////////////////////////////////
@@ -470,13 +409,9 @@ void generate_config() //generate single particle state
 		hh_config[i].flag = 1;
 	}
 
+
+
 	CHANNEL hh_channel[hh_dimension]; //先声明！！！！！！！
-//	CHANNEL *pp_channel = malloc(sizeof(CHANNEL) * pp_dimension);
-//	cout<< "pp_dimension ="<<pp_dimension<<endl;
-
-//	cout<<"pp_dimension = "<<pp_dimension<<endl;
-
-
 
 	int hh_temp_dimension = 0;
 	for(int i = 0; i< hh_no; i++)
@@ -513,14 +448,6 @@ void generate_config() //generate single particle state
 		hh_config[i].flag = 1;
 	}
 
-	for(int i = 0; i<hh_dimension; i++)
-	{
-	//	cout<<"hh dimension "<<i<<endl;
-	//	cout<<"times = "<<hh_channel[i].times<<" "<<hh_channel[i].Qx<<" "<<hh_channel[i].Qy<<" "<<hh_channel[i].Qz<<endl;
-	}
-
-//	cout<<"hh no"<<hh_no<<endl;
-
 
 	loop5 = 0;
 	k = 0;
@@ -538,11 +465,7 @@ void generate_config() //generate single particle state
 					hh_channel[loop5].wf[k].q_kz = hh_config[j].q_kz;
 					hh_channel[loop5].wf[k].sz1 = hh_config[j].sz1;
 					hh_channel[loop5].wf[k].sz2 = hh_config[j].sz2;
-
-					hh_config[j].flag = 0;
-  //                  count_1 ++;
-//					cout<<count_1<<"="<<pp_channel[loop5].wf[k].q_kx<<endl;
-                    
+					hh_config[j].flag = 0;                  
 					k++;
 				}
 			}
@@ -553,62 +476,11 @@ void generate_config() //generate single particle state
 			loop5++;
 		}
 	}
-	cout<<loop5<<endl;
-//	cout<<"test count "<<count_1<<endl;
-//	for(int i = 0; i<loop5; i++)
-//	{
-//		cout<<"times "<<pp_channel[i].times<<endl;
-//		for (int j = 0; j < hh_channel[i].times; j++)
-//		{
-//			cout<<"222   "<<pp_channel[i].wf[j].q_kx<<endl;
-//		}
-//	}
 
 
-	//// Assignment for the t_Ppk ////
+	//// Assignment for the V_ijkl ////
 	//为每一个pp_channel[pp_temp_dimension]动态分配
-
-
 	MATRIX_CHANNEL V_ijkl[hh_dimension];
-	//MATRIX_CHANNEL t_cdab[hh_dimension];
-	//MATRIX_CHANNEL H_cdab[hh_dimension];
-//	cout<<"fuck you "<<pp_dimension<<endl;
-
-//    double **temp_pointer1_V;
-//    double *temp_pointer2_V;
-
-//    double **temp_pointer1_t;
-//    double *temp_pointer2_t;
-
-//    double **temp_pointer1_H;
-//    double *temp_pointer2_H;
-
-/*	for(int i = 0; i< pp_dimension; i++)
-	{
-		for(int ab = 0; ab < pp_channel[i].times; ab++)
-		{
-			temp_pointer1_V = (double **)malloc(pp_channel[i].times * sizeof(double*));
-		//	temp_pointer1_t = (double **)malloc(pp_channel[i].times * sizeof(double*));
-		//	temp_pointer1_H = (double **)malloc(pp_channel[i].times * sizeof(double*));
-
-			V_cdab[i].matrix = temp_pointer1_V;
-		//	t_cdab[i].matrix = temp_pointer1_t;
-		//	H_cdab[i].matrix = temp_pointer1_H;
-
-			for(int cd = 0; cd < pp_channel[i].times; cd++)
-			{
-				temp_pointer2_V = (double *)malloc(pp_channel[i].times * sizeof(double));
-		//		temp_pointer2_t = (double *)malloc(pp_channel[i].times * sizeof(double));
-		//		temp_pointer2_H = (double *)malloc(pp_channel[i].times * sizeof(double));
-
-				V_cdab[i].matrix[cd] = temp_pointer2_V;
-		//		t_cdab[i].matrix[ab] = temp_pointer2_t;
-		//		H_cdab[i].matrix[ab] = temp_pointer2_H;
-			}
-		}
-	}*/
-
-
 
 
 	for(int i = 0; i< hh_dimension; i++)
@@ -788,27 +660,6 @@ void generate_config() //generate single particle state
 			hhpp_temp_dimension++; 
 		}
 	}
-//	cout<<hhpp_temp_dimension<<endl;
-	//hhpp_channel_L[0].wf[0].q_kx = 1; //wf[0].q_kx =1.;
-//	cout<<"come"<<hhpp_channel_L[0].Qx<<endl;//wf[0].q_kx<<endl;
-//	cout <<"erro_111"<<endl;
-	/*
-	int sum_R,sum_L;
-		sum_R = 0;
-		sum_L = 0;
-	for(int i = 0; i<hhpp_dimension; i++) //将hh_config[i]的flag全都赋值回1
-	{
-
-		cout<<" channel ="<<i;
-		cout<<"  L_times ="<<hhpp_channel[i].L_times ;
-		sum_L += hhpp_channel[i].L_times;
-		sum_R += hhpp_channel[i].R_times;
-		cout<<"  R_times ="<<hhpp_channel[i].R_times<<endl ;
-	}
-    cout<<"sumL="<<sum_L<<endl;
-    cout<<"sumR="<<sum_R<<endl;   
-	*/
-
 
 
 	for(int i = 0; i<hh_no; i++) //将hh_config[i]的flag全都赋值回1
@@ -943,39 +794,13 @@ void generate_config() //generate single particle state
 	//********************************************************************//
 	////////////////////////////////////////////////////////////////////////
 
-//	int pp_temp_x, pp_temp_y, pp_temp_z;
-/*	int pp_dimension = 0;
-	for(int i = 0; i < pp_no; i++)
-	{
-		if(pp_config[i].flag == 1)
-		{
-			pp_temp_x = pp_config[i].Q_kx;
-			pp_temp_y = pp_config[i].Q_ky;
-			pp_temp_z = pp_config[i].Q_kz;
-			for(int j = i; j<pp_no; j++)
-			{
-				if(pp_config[j].Q_kx == pp_temp_x && pp_config[j].Q_ky == pp_temp_y && pp_config[j].Q_kz == pp_temp_z)
-				{
-					pp_config[j].flag = 0;
-				}
-			}
-			pp_dimension++; // 这记录了pp里有多少个不同的总动量
-		}	
-	}
-*/
+
 	for(int i = 0; i<pp_no; i++)
 	{
 		pp_config[i].flag = 1;
 	}
 
 	CHANNEL pp_channel[hhpp_dimension]; //先声明！！！！！！！
-//	CHANNEL *pp_channel = malloc(sizeof(CHANNEL) * pp_dimension);
-//	cout<< "pp_dimension ="<<pp_dimension<<endl;
-
-//	cout<<"pp_dimension = "<<pp_dimension<<endl;
-
-
-
 
 	//int pp_temp_dimension = 0;
 	for(int i = 0; i< hhpp_dimension; i++)
@@ -1002,9 +827,7 @@ void generate_config() //generate single particle state
 			pp_channel[i].wf[j].q_ky = hhpp_channel_R[i].wf[j].q_ky;
 			pp_channel[i].wf[j].q_kz = hhpp_channel_R[i].wf[j].q_kz;
 			pp_channel[i].wf[j].sz1  = hhpp_channel_R[i].wf[j].sz1;
-			pp_channel[i].wf[j].sz2  = hhpp_channel_R[i].wf[j].sz2;
-  //                count_1 ++;
-//					cout<<count_1<<"="<<pp_channel[loop5].wf[k].q_kx<<endl;    				
+			pp_channel[i].wf[j].sz2  = hhpp_channel_R[i].wf[j].sz2;			
 		}
 //			if(k != pp_channel[loop5].times) 
 //			{
@@ -1015,40 +838,11 @@ void generate_config() //generate single particle state
 //	cout<<loop5<<endl;
 //	cout<<"test count "<<count_1<<endl;
 
-	//// Assignment for the t_Ppk ////
+	//// Assignment for the V_cdab ////
 	//为每一个pp_channel[pp_temp_dimension]动态分配
 
 	MATRIX_CHANNEL V_cdab[hhpp_dimension];
-//	MATRIX_CHANNEL t_cdab[pp_dimension];
-//	MATRIX_CHANNEL H_cdab[pp_dimension];
-//	cout<<"fuck you "<<pp_dimension<<endl;
 
-
-
-/*	for(int i = 0; i< pp_dimension; i++)
-	{
-		for(int ab = 0; ab < pp_channel[i].times; ab++)
-		{
-			temp_pointer1_V = (double **)malloc(pp_channel[i].times * sizeof(double*));
-		//	temp_pointer1_t = (double **)malloc(pp_channel[i].times * sizeof(double*));
-		//	temp_pointer1_H = (double **)malloc(pp_channel[i].times * sizeof(double*));
-
-			V_cdab[i].matrix = temp_pointer1_V;
-		//	t_cdab[i].matrix = temp_pointer1_t;
-		//	H_cdab[i].matrix = temp_pointer1_H;
-
-			for(int cd = 0; cd < pp_channel[i].times; cd++)
-			{
-				temp_pointer2_V = (double *)malloc(pp_channel[i].times * sizeof(double));
-		//		temp_pointer2_t = (double *)malloc(pp_channel[i].times * sizeof(double));
-		//		temp_pointer2_H = (double *)malloc(pp_channel[i].times * sizeof(double));
-
-				V_cdab[i].matrix[cd] = temp_pointer2_V;
-		//		t_cdab[i].matrix[ab] = temp_pointer2_t;
-		//		H_cdab[i].matrix[ab] = temp_pointer2_H;
-			}
-		}
-	}*/
 	for(int i = 0; i< hhpp_dimension; i++)
 	{
 		temp_pointer1_V = (double **)malloc(pp_channel[i].times * sizeof(double*));
@@ -1271,9 +1065,9 @@ void generate_config() //generate single particle state
 					//**************************//
 					//////////////////////////////
 					///// RENEW t_ijab MATRIX ELEMENTS /////
-					//////**** HERE we should use MIXING !!!****///////
-					//**** t(i) = a * t_no_mixing(i) + (1-a) * t(i-1) ****//
-					//**** ALTERNATIVE CHOICE, WHICH IS IDENTICAL t(i) = t(i-1) + a * H_bar / (f_aa + f_bb + f_ii + f_jj) *****//
+				//////**** HERE we should use MIXING !!!****///////
+			  //**** t(i) = a * t_no_mixing(i) + (1-a) * t(i-1) ****//
+//**** ALTERNATIVE CHOICE, WHICH IS IDENTICAL t(i) = t(i-1) + a * H_bar / (f_aa + f_bb + f_ii + f_jj) *****//
 
 					t_last = t_ijab[i].matrix[ij][ab];
 					t_no_this = t_ijab[i].matrix[ij][ab] - H_ijab[i].matrix[ij][ab] / ( f_aa + f_bb - f_ii - f_jj );
