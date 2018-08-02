@@ -6,17 +6,14 @@
 #include <cmath>
 #include <iomanip>
 #include <time.h>
-#include <eigen3/Eigen/Eigen>
-#include <eigen3/Eigen/Dense>
 
 using namespace std;
-using namespace Eigen;
 
 #define pi 3.1415926
 
 const int magic_no = 14;
-const int Nmax = 2;
-const double density = 0.08;
+const int Nmax = 1;
+//const double density = 0.08;
 const double mass = 938.92; // in unit of MeV
 const double h_bar = 197.33;
 
@@ -149,10 +146,11 @@ double f_ks(struct spstate *config, int spstates_no, double L, int kp_x, int kp_
 
 
 
-void generate_config() //generate single particle state
+void CCD_neutronmatter(double rho) //generate single particle state
 {
 	double L;
-	L = pow((double)magic_no/density, 1./3.);
+//	L = pow((double)magic_no/density, 1./3.);
+	L = pow((double)magic_no/rho, 1./3.);
 
 	int spstates_no = 2 * pow((2*Nmax+1),3);
 	spstate *config = (spstate *)malloc(spstates_no * sizeof(spstate));
@@ -227,11 +225,11 @@ void generate_config() //generate single particle state
 
 	double pp_no = (spstates_no - magic_no) * (spstates_no - magic_no - 1);//combinator((spstates_no - magic_no) , 2); // number of pp-configurations in relative presentation
 	double hh_no = 2 * combinator(magic_no, 2);
-	double ph_no = 2 * (spstates_no - magic_no) * magic_no;
+//	double ph_no = 2 * (spstates_no - magic_no) * magic_no;
 
 	tbwf *pp_config = (tbwf *)malloc(pp_no * sizeof(tbwf)); //configurations in relative presentation
 	tbwf *hh_config = (tbwf *)malloc(hh_no * sizeof(tbwf));
-	tbwf *ph_config = (tbwf *)malloc(ph_no * sizeof(tbwf));
+//	tbwf *ph_config = (tbwf *)malloc(ph_no * sizeof(tbwf));
 
 
 
@@ -318,16 +316,17 @@ void generate_config() //generate single particle state
 //		cout<<"kinetic energy is "<<Ek/14.<<endl;
 		double hf_energy;
 		hf_energy = Ek;
-		cout<<hh_no<<endl;
+//		cout<<hh_no<<endl;
 		for(int ij = 0; ij < hh_no; ij++)
 		{
 			hf_energy += 0.5 * V_ks_AS(L, hh_config[ij].q_kx, hh_config[ij].q_ky, hh_config[ij].q_kz, hh_config[ij].sz1, hh_config[ij].sz2, \
 			hh_config[ij].q_kx, hh_config[ij].q_ky, hh_config[ij].q_kz, hh_config[ij].sz1, hh_config[ij].sz2);
 		}
-		cout<<"hatree fock energy = "<<hf_energy/14.<<endl;
+		printf("density = %.2f", rho);
+//		printf(" , Ehf/N = ");" , (Ehf/N) = "<<hf_energy/magic_no<<" ";
 
 
-		for(int k1 = 0; k1<spstates_no; k1++)
+/*		for(int k1 = 0; k1<spstates_no; k1++)
 		{
 			for(int k2 = 0; k2<spstates_no; k2++)
 			{
@@ -348,7 +347,7 @@ void generate_config() //generate single particle state
 					loop4++;
 				}
 			}
-		}
+		}*/
 
 
 	////////////////////////////////////////////////////////////////////////
@@ -986,7 +985,7 @@ void generate_config() //generate single particle state
 	/////////////////////////////////////////////////////////////////////////
 	int iter = 0;
 	double t_no_this, t_last;
-	double alpha = 0.5; //*** Here we could try different alpha!!! ****//
+	double alpha = 0.9; //*** Here we could try different alpha!!! ****//
 	double temp1, temp2, delta;
 	double Ec = 0.;
 	do
@@ -1104,17 +1103,19 @@ void generate_config() //generate single particle state
 		
 
 		
-		temp2 = Ec; //record the Ec this time
+		temp2 = Ec; //record the Ec for this time
 		
 		delta = fabs(temp1 - temp2);
 		
-		cout<<"Ec/N_"<<iter<<" = "<<temp2/14.<<", d_Ec = "<<delta<<endl;
+//		cout<<"(Ec/N)_"<<iter<<" = "<<temp2/14.<<", d_Ec = "<<delta<<endl;
 		
 		iter++; //COUNT THE ITERATION TIMES
 
 		if(iter>1000) break; // IF IT CANNOT CONVERGE UNTIL 1000 ITERATIONS, BREAK OUT.
 
-	}while(delta>10e-5);
+	}while(delta>10e-7);
+	cout<<" , (Ec/N) = "<<temp2/magic_no;
+	cout<<" , (Etot/N) = "<<(hf_energy+temp2)/magic_no<<endl;
 
 
 
@@ -1128,7 +1129,7 @@ void generate_config() //generate single particle state
 	free(config);
 	free(pp_config);
 	free(hh_config);
-	free(ph_config);
+//	free(ph_config);
 
 	for(int i = 0; i<hhpp_dimension; i++)
 	{
@@ -1181,7 +1182,12 @@ void generate_config() //generate single particle state
 
 int main()
 {
-    generate_config();
+	double rho;
+	for(int i = 0; i < 9; i++)
+	{
+		rho = 0.04 + double(i)/50.;
+		CCD_neutronmatter(rho);
+	}
 
 
 }
